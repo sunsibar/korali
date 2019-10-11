@@ -9,6 +9,7 @@ void korali::conduit::Simple::processSample(korali::Sample& sample)
  _modelEvaluationCount++;
 
  _profileInfo["Conduit 0"].startSegment(sample["Sample Id"]);
+ _k->_problem->preprocessSample(sample["Operation"], sample);
  _k->_problem->runOperation(sample["Operation"], sample);
  _profileInfo["Conduit 0"].commitSegment();
 }

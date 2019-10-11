@@ -2,6 +2,11 @@
  "Available Operations":
  [
   {
+   "Name": "Default",
+   "Description": "Applies log transformation on sample.",
+   "Function": "logTransform"
+  },
+  {
    "Name": "Basic Evaluation",
    "Description": "Evaluates a sample, given the problem description.",
    "Function": "basicEvaluation",

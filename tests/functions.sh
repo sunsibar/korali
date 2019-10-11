@@ -4,6 +4,7 @@ curdir=$PWD
 logFile=$curdir/test.log
 echo "" > $logFile
 
+# Check valid return code of shell comand
 function check_result()
 {
  if [ ! $? -eq 0 ]
@@ -12,6 +13,25 @@ function check_result()
   tail $logFile
   exit -1
  fi 
+}
+
+tstart=0
+
+function timerStart()
+{
+ tstart=$SECONDS
+
+}
+
+function timerEnd()
+{
+ if [ $tstart -eq 0 ]
+ then
+    duration=$(( $SECONDS-tstart ))
+    logEcho "Duration $duration seconds."
+ else
+    logEcho "Timer not started (no measurements)."
+ fi
 }
 
 # Logging and printing function.

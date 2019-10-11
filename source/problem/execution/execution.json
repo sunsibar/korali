@@ -9,11 +9,16 @@
  ],
 
  "Available Operations":
- [
+ [  
+  {
+   "Name": "Default",
+   "Description": "Applies log transformation on sample.",
+   "Function": "logTransform"
+  },
   {
    "Name": "Execute" ,
-   "Function": "execute",
-   "Description": "Executes the given model using the parameters from the given sample."
+   "Description": "Executes the given model using the parameters from the given sample.",
+   "Function": "execute"
   }
  ],
 

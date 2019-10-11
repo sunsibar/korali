@@ -108,6 +108,7 @@ void korali::conduit::MPI::workerThread()
    jsonStringChar[jsonStringSize] = '\0';
    sample._js.getJson() = nlohmann::json::parse(jsonStringChar);
 
+   _k->_problem->preprocessSample(sample["Operation"], sample);
    _k->_problem->runOperation(sample["Operation"], sample);
 
    if (_localRankId == 0)

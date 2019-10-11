@@ -11,6 +11,8 @@ class Problem : public korali::Module
  public:
 
  ProfileInfo _profileInfo;
+ void logTransform(korali::Sample& sample) { return; };
+ virtual void preprocessSample(std::string operation, korali::Sample& sample) { return; };
  virtual bool runOperation(std::string operation, korali::Sample& sample) { return false; };
 };
 
