@@ -24,16 +24,19 @@ void korali::solver::sampler::TMCMC::initialize()
  korali::solver::Sampler::initialize();
 
  auto jsMultinomial = nlohmann::json();
+ jsMultinomial["Name"] = "TMCMC Multivnomial Generator";
  jsMultinomial["Type"] = "Specific/Multinomial";
  _multinomialGenerator = dynamic_cast<korali::distribution::specific::Multinomial*>(korali::Module::getModule(jsMultinomial));
  _multinomialGenerator->initialize();
 
  auto jsMultivariate = nlohmann::json();
+ jsMultivariate["Name"] = "TMCMC Multivariate Generator";
  jsMultivariate["Type"] = "Multivariate/Normal";
  _multivariateGenerator = dynamic_cast<korali::distribution::multivariate::Normal*>(korali::Module::getModule(jsMultivariate));
  _multivariateGenerator->initialize();
 
  auto jsUniform = nlohmann::json();
+ jsUniform["Name"] = "TMCMC Uniform Generator";
  jsUniform["Type"] = "Univariate/Uniform";
  jsUniform["Minimum"] = 0.0;
  jsUniform["Maximum"] = 1.0;
@@ -139,7 +142,7 @@ void korali::solver::sampler::TMCMC::generateCandidate(size_t c)
  /* in generation one (zero in [Chen2007]), we take initialized samples from prior */
  if (_k->_currentGeneration == 1)
  {
-  for (size_t d = 0; d < N; d++) _chainCandidates[c][d] = _k->_variables[d]->_priorDistribution->getRandomNumber();
+  for (size_t d = 0; d < N; d++) _chainCandidates[c][d] = _k->_distributions[ _k->_variables[d]->_distributionIndex]->getRandomNumber();
   return;
  }
 
@@ -151,6 +154,7 @@ void korali::solver::sampler::TMCMC::generateCandidate(size_t c)
   for (size_t i = 0; i < N; i++) _currentMean.push_back(_chainLeaders[c][i]);
 
  auto jsMultivariateNormalConfig = nlohmann::json();
+ jsMultivariateNormalConfig["Name"] = "TMCMC Multivariate Generator";
  jsMultivariateNormalConfig["Covariance Matrix"] = _covarianceMatrix;
  jsMultivariateNormalConfig["Mean Vector"] = _currentMean;
  _multivariateGenerator->setConfiguration(jsMultivariateNormalConfig);

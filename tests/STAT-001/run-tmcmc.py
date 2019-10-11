@@ -18,12 +18,17 @@ k["Results Output"]["Path"] = "_result_run-tmcmc"
 k["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
 k["Problem"]["Likelihood Model"] = model
 
+k["Distributions"][0]["Name"] = "Uniform 0"
+k["Distributions"][0]["Type"] = "Univariate/Uniform"
+k["Distributions"][0]["Minimum"] = -100000.0
+k["Distributions"][0]["Maximum"] = +100000.0
+ 
+k["Variables"][0]["Name"] = "X"
+k["Variables"][0]["Prior Distribution"] = "Uniform 0"
+
 # Defining problem's variables and prior distribution for TMCMC
 k["Variables"][0]["Name"] = "X"
-k["Variables"][0]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][0]["Prior Distribution"]["Minimum"] = -100000.0
-k["Variables"][0]["Prior Distribution"]["Maximum"] = +100000.0
-
+k["Variables"][0]["Prior Distribution"] = "Uniform 0"
 # Configuring the TMCMC sampler parameters
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 5000

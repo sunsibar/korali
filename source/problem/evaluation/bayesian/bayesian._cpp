@@ -5,14 +5,24 @@
 void korali::problem::evaluation::Bayesian::initialize()
 {
   if (_k->_variables.size() == 0) korali::logError("Bayesian problems require at least one variable.\n");
-  for (size_t i = 0; i < _k->_variables.size(); i++) _k->_variables[i]->_priorDistribution->initialize();
+  for (size_t i = 0; i < _k->_variables.size(); i++)
+  {
+   bool foundDistribution = false;
+
+   for (size_t j = 0; j < _k->_distributions.size(); j++)
+    if (_k->_variables[i]->_priorDistribution == _k->_distributions[j]->_name) { foundDistribution = true; _k->_variables[i]->_distributionIndex = j; }
+
+   if (foundDistribution == false)
+    korali::logError("Did not find distribution %s, specified by variable %s\n", _k->_variables[i]->_priorDistribution.c_str(), _k->_variables[i]->_name.c_str());
+  }
 }
 
 void korali::problem::evaluation::Bayesian::evaluateLogPrior(korali::Sample& sample)
 {
   double logPrior = 0.0;
+
   for (size_t i = 0; i < sample["Parameters"].size(); i++)
-    logPrior += _k->_variables[i]->_priorDistribution->getLogDensity(sample["Parameters"][i]);
+    logPrior += _k->_distributions[_k->_variables[i]->_distributionIndex]->getLogDensity(sample["Parameters"][i]);
 
   sample["logPrior"] = logPrior;
 }
@@ -43,7 +53,7 @@ void korali::problem::evaluation::Bayesian::evaluateLogPosterior(korali::Sample&
 bool korali::problem::evaluation::Bayesian::isSampleFeasible(korali::Sample& sample)
 {
   for (size_t i = 0; i < sample["Parameters"].size(); i++)
-    if (isfinite(_k->_variables[i]->_priorDistribution->getLogDensity(sample["Parameters"][i])) == false) return false;
+    if (isfinite(_k->_distributions[_k->_variables[i]->_distributionIndex]->getLogDensity(sample["Parameters"][i])) == false) return false;
   return true;
 }
 

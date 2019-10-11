@@ -113,6 +113,7 @@ void korali::Engine::initialize()
  mkdir(_resultsOutputPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
  // Initializing Modules
+ for (size_t i = 0; i < _k->_distributions.size(); i++) _k->_distributions[i]->initialize();
  _problem->initialize();
  _solver->initialize();
  _conduit->initialize();

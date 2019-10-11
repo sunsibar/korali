@@ -21,6 +21,8 @@ class Distribution : public korali::Module
 
  public:
 
+ bool _hasConditionalVariables;
+
  void initialize() override;
  void finalize() override;
  virtual void updateDistribution() { };

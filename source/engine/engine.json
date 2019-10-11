@@ -20,6 +20,11 @@
     "Description": "Specifies how often (in generations) will partial result files be saved on the results directory. The default, 1, indicates that every generation's results will be saved."
    },
    {
+    "Name": [ "Distributions" ],
+    "Type": "std::vector<korali::distribution::Univariate*>",
+    "Description": "Represents the distributions to use during execution."
+   },
+   {
     "Name": [ "Variables" ],
     "Type": "std::vector<korali::Variable*>",
     "Description": "Sample coordinate information."

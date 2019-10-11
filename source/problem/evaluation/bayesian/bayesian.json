@@ -25,8 +25,14 @@
  [
    {
     "Name": [ "Prior Distribution" ],
-    "Type": "korali::distribution::Univariate*",
-    "Description": "Eh..."
+    "Type": "std::string",
+    "Description": "Determines the name of the distribution to use as prior distribution..."
+   },
+   {
+    "Name": [ "Distribution Index" ],
+    "Type": "size_t",
+    "Default": "0",
+    "Description": "Determines the index number of the selected prior distribution"
    }
  ]
 }

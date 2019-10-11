@@ -8,8 +8,8 @@
    },
    {
     "Name": [ "Conditional Priors" ],
-    "Type": "std::vector<korali::distribution::Univariate*>",
-    "Description": "Eh..."
+    "Type": "std::vector<std::string>",
+    "Description": "List of conditional priors to use in the hierarchical problem."
    }
  ]
 }

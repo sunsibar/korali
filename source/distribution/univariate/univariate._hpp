@@ -9,10 +9,10 @@ class Univariate : public korali::Distribution
 {
  public:
 
+  void initialize() override;
  virtual double getDensity(double x) = 0;
  virtual double getLogDensity(double x) = 0;
  virtual double getRandomNumber() = 0;
-
 };
 
 } } // namespace korali::distribution

@@ -1,1 +1,1 @@
-# A.6 Hierarchical Bayesian Inference
+# A.7 Simple Hierarchical Bayesian Inference

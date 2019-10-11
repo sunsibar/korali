@@ -64,6 +64,7 @@ void korali::solver::sampler::MCMC::initialize()
 {
  // Initializing RNGs
  auto jsNormal = nlohmann::json();
+ jsNormal["Name"] = "Normal Generator";
  jsNormal["Type"] = "Univariate/Normal";
  jsNormal["Mean"] = 0.0;
  jsNormal["Standard Deviation"] = 1.0;
@@ -71,6 +72,7 @@ void korali::solver::sampler::MCMC::initialize()
  _normalGenerator->initialize();
 
  auto jsUniform = nlohmann::json();
+ jsUniform["Name"] = "Uniform Generator";
  jsUniform["Type"] = "Univariate/Uniform";
  jsUniform["Minimum"] = 0.0;
  jsUniform["Maximum"] = 1.0;

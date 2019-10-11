@@ -7,7 +7,20 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
 {
  korali::problem::evaluation::bayesian::Hierarchical::initialize();
 
+ _conditionalPriorIndexes.resize(_conditionalPriors.size());
+
  if (_conditionalPriors.size() == 0) korali::logError("Hierarchical Bayesian (Psi) problems require at least one conditional prior\n");
+
+ for (size_t i = 0; i < _conditionalPriors.size(); i++)
+ {
+  bool foundDistribution = false;
+
+  for (size_t j = 0; j < _k->_distributions.size(); j++)
+   if (_conditionalPriors[i] == _k->_distributions[j]->_name) { foundDistribution = true; _conditionalPriorIndexes[i] = j; }
+
+  if (foundDistribution == false)
+   korali::logError("Did not find conditional prior distribution %s\n", _conditionalPriors[i].c_str());
+ }
 
  if (_subProblems.size() < 2) korali::logError("Hierarchical Bayesian (Psi) problem requires defining at least two executed sub-problems.\n");
 
@@ -58,7 +71,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
 
  for (size_t i = 0; i < _conditionalPriors.size(); i++)
  {
-  _conditionalPriors[i]->getConfiguration(_conditionalPriorInfos[i]._conditionalJson);
+  _k->_distributions[_conditionalPriorIndexes[i]]->getConfiguration(_conditionalPriorInfos[i]._conditionalJson);
 
   for (auto it = _conditionalPriorInfos[i]._conditionalJson.begin(); it != _conditionalPriorInfos[i]._conditionalJson.end(); ++it) if (it.value().is_string())
   {
@@ -66,6 +79,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
    std::string value(it.value().get<std::string>());
    size_t position = 0;
 
+   if (key == "Name") continue;
    if (key == "Type") continue;
 
    bool foundValue = false;
@@ -85,19 +99,21 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::updateConditional
  {
   bool hasChanged = false;
 
+  auto newValuesJs = _conditionalPriorInfos[i]._conditionalJson;
+
   for (size_t j = 0; j < _conditionalPriorInfos[i]._sampleKeys.size(); j++)
   {
    std::string key = _conditionalPriorInfos[i]._sampleKeys[j];
    size_t position = _conditionalPriorInfos[i]._samplePositions[j];
    double value = sample["Parameters"][_conditionalPriorInfos[i]._samplePositions[j]];
-   _conditionalPriorInfos[i]._conditionalJson[key] = value;
+   newValuesJs[key] = value;
    hasChanged = true;
   }
 
   if (hasChanged)
   {
-   _conditionalPriors[i]->setConfiguration(_conditionalPriorInfos[i]._conditionalJson);
-   _conditionalPriors[i]->updateDistribution();
+   _k->_distributions[_conditionalPriorIndexes[i]]->setConfiguration(newValuesJs);
+   _k->_distributions[_conditionalPriorIndexes[i]]->updateDistribution();
   }
  }
 }
@@ -118,7 +134,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::evaluateLogLikeli
    {
     logValues[j] = -_subProblemsSampleLogPriors[i][j];
     for( size_t k = 0; k < _conditionalPriors.size(); k++ )
-     logValues[j] += _conditionalPriors[k]->getLogDensity(_subProblemsSampleCoordinates[i][j][k]);
+     logValues[j] += _k->_distributions[_conditionalPriorIndexes[k]]->getLogDensity(_subProblemsSampleCoordinates[i][j][k]);
    }
 
    logLikelihood += logSumExp(logValues);

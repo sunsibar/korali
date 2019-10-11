@@ -22,11 +22,14 @@ def run_tmcmc_with_termination_criterion(criterion, value):
     k["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
     k["Problem"]["Likelihood Model"] = evaluateLogLikelihood
 
-    k["Variables"][0]["Name"] = "X"
-    k["Variables"][0]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-    k["Variables"][0]["Prior Distribution"]["Minimum"] = -10.0
-    k["Variables"][0]["Prior Distribution"]["Maximum"] = +10.0
+    k["Distributions"][0]["Name"] = "Uniform 0"
+    k["Distributions"][0]["Type"] = "Univariate/Uniform"
+    k["Distributions"][0]["Minimum"] = -10.0
+    k["Distributions"][0]["Maximum"] = +10.0
 
+    k["Variables"][0]["Name"] = "X"
+    k["Variables"][0]["Prior Distribution"] = "Uniform 0"
+  
     k["Solver"]["Type"] = "Sampler/TMCMC"
     k["Solver"]["Population Size"] = 5000
     k["Solver"]["Covariance Scaling"] = 0.001

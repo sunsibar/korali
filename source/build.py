@@ -193,9 +193,10 @@ def createSetConfiguration(module):
   codeString += ' } \n'
    
  if 'Conditional Variables' in module:
+  codeString += '  _hasConditionalVariables = false; \n' 
   for v in module["Conditional Variables"]:
    codeString += ' if(js' + getVariablePath(v) + '.is_number()) ' + getCXXVariableName(v["Name"]) + ' = js' + getVariablePath(v) + ';\n'
-   codeString += ' if(js' + getVariablePath(v) + '.is_string()) ' + getCXXVariableName(v["Name"]) + 'Conditional = js' + getVariablePath(v) + ';\n'
+   codeString += ' if(js' + getVariablePath(v) + '.is_string()) { _hasConditionalVariables = true; ' + getCXXVariableName(v["Name"]) + 'Conditional = js' + getVariablePath(v) + '; } \n'
    codeString += ' korali::JsonInterface::eraseValue(js, "' + getVariablePath(v).replace('"', "'") + '");\n\n'
  
  codeString += ' ' + module["Parent Class"] + '::setConfiguration(js);\n'
@@ -232,11 +233,11 @@ def createGetConfiguration(module):
   for v in module["Variables Configuration"]:
    codeString += saveValue('_k->_js["Variables"][i]', getVariablePath(v), '_k->_variables[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
   codeString += ' } \n'  
-   
- if 'Conditional Variables' in module: 
+  
+ if 'Conditional Variables' in module:
   for v in module["Conditional Variables"]:
    codeString += ' if(' + getCXXVariableName(v["Name"]) + 'Conditional == "") js' + getVariablePath(v) + ' = ' + getCXXVariableName(v["Name"]) + ';\n'
-   codeString += ' if(' + getCXXVariableName(v["Name"]) + 'Conditional != "") js' + getVariablePath(v) + ' = ' + getCXXVariableName(v["Name"]) + 'Conditional;\n'
+   codeString += ' if(' + getCXXVariableName(v["Name"]) + 'Conditional != "") js' + getVariablePath(v) + ' = ' + getCXXVariableName(v["Name"]) + 'Conditional; \n'
  
  codeString += ' ' + module["Parent Class"] + '::getConfiguration(js);\n'
  

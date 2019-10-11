@@ -10,10 +10,13 @@ k = korali.initialize()
 k["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
 k["Problem"]["Likelihood Model"] = evaluateModel
 
+k["Distributions"][0]["Name"] = "Uniform 0"
+k["Distributions"][0]["Type"] = "Univariate/Uniform"
+k["Distributions"][0]["Minimum"] = -10.0
+k["Distributions"][0]["Maximum"] = +10.0
+
 k["Variables"][0]["Name"] = "X"
-k["Variables"][0]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][0]["Prior Distribution"]["Minimum"] = -10.0
-k["Variables"][0]["Prior Distribution"]["Maximum"] = +10.0
+k["Variables"][0]["Prior Distribution"] = "Uniform 0"
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 5000
@@ -41,7 +44,7 @@ assert_value( k["Solver"]["Internal"]["Selection Acceptance Rate"], 1.0 )
 
 # Test Variables
 
-assert_string( k["Variables"][0]["Prior Distribution"]["Type"], "Univariate/Uniform" )
-assert_value( k["Variables"][0]["Prior Distribution"]["Maximum"], 10 )
-assert_value( k["Variables"][0]["Prior Distribution"]["Minimum"], -10 )
+assert_string( k["Distributions"][0]["Type"], "Univariate/Uniform" )
+assert_value( k["Distributions"][0]["Minimum"], -10 )
+assert_value( k["Distributions"][0]["Maximum"], 10 )
 

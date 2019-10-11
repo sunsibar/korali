@@ -9,15 +9,21 @@ k = korali.initialize()
 k["Problem"]["Type"]  = "Evaluation/Bayesian/Hierarchical/ThetaNew"
 k["Problem"]["Psi Problem Path"] = '../setup/results_phase_2/final.json'
 
-k["Variables"][0]["Name"] = "mu"
-k["Variables"][0]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][0]["Prior Distribution"]["Minimum"] =  -20.0
-k["Variables"][0]["Prior Distribution"]["Maximum"] = 40.0
+k["Distributions"][0]["Name"] = "Uniform 0"
+k["Distributions"][0]["Type"] = "Univariate/Uniform"
+k["Distributions"][0]["Minimum"] = -20.0
+k["Distributions"][0]["Maximum"] = 40.0
 
+k["Distributions"][1]["Name"] = "Uniform 1"
+k["Distributions"][1]["Type"] = "Univariate/Uniform"
+k["Distributions"][1]["Minimum"] = 0.0
+k["Distributions"][1]["Maximum"] = 10.0
+
+k["Variables"][0]["Name"] = "mu"
 k["Variables"][1]["Name"] = "sigma"
-k["Variables"][1]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][1]["Prior Distribution"]["Minimum"] = 0.0
-k["Variables"][1]["Prior Distribution"]["Maximum"] = 10.0
+
+k["Variables"][0]["Prior Distribution"] = "Uniform 0"
+k["Variables"][1]["Prior Distribution"] = "Uniform 1"
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 10

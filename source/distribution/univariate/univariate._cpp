@@ -1,4 +1,7 @@
 #include "distribution/univariate/univariate.hpp"
 #include "engine/engine.hpp"
 
-
+void korali::distribution::Univariate::initialize()
+{
+ korali::Distribution::initialize();
+}

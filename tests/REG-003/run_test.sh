@@ -97,7 +97,7 @@ chmod a+x run_dry.py
 check_result
 
 logEcho "[Korali] Running run_dry.py..."
-mpirun -n 3 ./run_dry.py 2 >> $logFile
+./run_dry.py 2 >> $logFile
 check_result
 
 popd

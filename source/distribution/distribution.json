@@ -1,2 +1,10 @@
 {
+ "Configuration Settings":
+ [
+  {
+   "Name": [ "Name" ],
+   "Type": "std::string",
+   "Description": "Defines the name of the distribution."
+  }
+ ]
 }

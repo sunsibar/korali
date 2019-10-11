@@ -11,52 +11,76 @@ k = korali.initialize()
 k["Problem"]["Type"]  = "Evaluation/Bayesian/Hierarchical/Psi"
 k["Problem"]["Sub Problems"] = ['../setup/results_phase_1/' + str(i).zfill(3) + '/final.json' for i in range(5)]
 
+k["Distributions"][0]["Name"] = "Conditional 0"
+k["Distributions"][0]["Type"] = "Univariate/Uniform"
+k["Distributions"][0]["Minimum"] = 280
+k["Distributions"][0]["Maximum"] = 320
+
+k["Distributions"][1]["Name"] = "Conditional 1"
+k["Distributions"][1]["Type"] = "Univariate/Normal"
+k["Distributions"][1]["Mean"] = "Psi 1"
+k["Distributions"][1]["Standard Deviation"] = "Psi 2"
+
+k["Distributions"][2]["Name"] = "Conditional 2"
+k["Distributions"][2]["Type"] = "Univariate/LogNormal"
+k["Distributions"][2]["Mu"]    = "Psi 3"
+k["Distributions"][2]["Sigma"] = "Psi 4"
+
+k["Distributions"][3]["Name"] = "Conditional 3"
+k["Distributions"][3]["Type"] = "Univariate/Uniform"
+k["Distributions"][3]["Minimum"] = "Psi 5"
+k["Distributions"][3]["Maximum"] = "Psi 6"
+
 # Add probability of theta given psi, one per subproblem variable.
-k["Problem"]["Conditional Priors"][0]["Type"] = "Univariate/Uniform"
-k["Problem"]["Conditional Priors"][0]["Minimum"] = 280
-k["Problem"]["Conditional Priors"][0]["Maximum"] = 320
+k["Problem"]["Conditional Priors"] = [ "Conditional 0", "Conditional 1", "Conditional 2", "Conditional 3" ]
 
-k["Problem"]["Conditional Priors"][1]["Type"] = "Univariate/Normal"
-k["Problem"]["Conditional Priors"][1]["Mean"] = "Psi 1"
-k["Problem"]["Conditional Priors"][1]["Standard Deviation"] = "Psi 2"
+k["Distributions"][4]["Name"] = "Uniform 0"
+k["Distributions"][4]["Type"] = "Univariate/Uniform"
+k["Distributions"][4]["Minimum"] = 10.0
+k["Distributions"][4]["Maximum"] = 70.0
 
-k["Problem"]["Conditional Priors"][2]["Type"] = "Univariate/LogNormal"
-k["Problem"]["Conditional Priors"][2]["Mu"]    = "Psi 3"
-k["Problem"]["Conditional Priors"][2]["Sigma"] = "Psi 4"
+k["Distributions"][5]["Name"] = "Uniform 1"
+k["Distributions"][5]["Type"] = "Univariate/Uniform"
+k["Distributions"][5]["Minimum"] = 0.001
+k["Distributions"][5]["Maximum"] = 30.0
 
-k["Problem"]["Conditional Priors"][3]["Type"] = "Univariate/Uniform"
-k["Problem"]["Conditional Priors"][3]["Minimum"] = "Psi 5"
-k["Problem"]["Conditional Priors"][3]["Maximum"] = "Psi 6"
+k["Distributions"][6]["Name"] = "Uniform 2"
+k["Distributions"][6]["Type"] = "Univariate/Uniform"
+k["Distributions"][6]["Minimum"] = -1.0
+k["Distributions"][6]["Maximum"] = +1.0
+
+k["Distributions"][7]["Name"] = "Uniform 3"
+k["Distributions"][7]["Type"] = "Univariate/Uniform"
+k["Distributions"][7]["Minimum"] = 0.0
+k["Distributions"][7]["Maximum"] = 10.0
+
+k["Distributions"][8]["Name"] = "Uniform 4"
+k["Distributions"][8]["Type"] = "Univariate/Uniform"
+k["Distributions"][8]["Minimum"] = 0.0
+k["Distributions"][8]["Maximum"] = 15.0
+
+k["Distributions"][9]["Name"] = "Uniform 5"
+k["Distributions"][9]["Type"] = "Univariate/Uniform"
+k["Distributions"][9]["Minimum"] = 0.0
+k["Distributions"][9]["Maximum"] = 15.0
 
 k["Variables"][0]["Name"] = "Psi 1"
-k["Variables"][0]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][0]["Prior Distribution"]["Minimum"] = 10.0
-k["Variables"][0]["Prior Distribution"]["Maximum"] = 70.0
+k["Variables"][0]["Prior Distribution"] = "Uniform 0"
 
 k["Variables"][1]["Name"] = "Psi 2"
-k["Variables"][1]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][1]["Prior Distribution"]["Minimum"] =  0.001
-k["Variables"][1]["Prior Distribution"]["Maximum"] = 30.0
+k["Variables"][1]["Prior Distribution"] = "Uniform 1"
 
 k["Variables"][2]["Name"] = "Psi 3"
-k["Variables"][2]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][2]["Prior Distribution"]["Minimum"] = -1.0
-k["Variables"][2]["Prior Distribution"]["Maximum"] = +1.0
+k["Variables"][2]["Prior Distribution"] = "Uniform 2"
 
 k["Variables"][3]["Name"] = "Psi 4"
-k["Variables"][3]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][3]["Prior Distribution"]["Minimum"] = 0.0
-k["Variables"][3]["Prior Distribution"]["Maximum"] = 10.0
+k["Variables"][3]["Prior Distribution"] = "Uniform 3"
 
 k["Variables"][4]["Name"] = "Psi 5"
-k["Variables"][4]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][4]["Prior Distribution"]["Minimum"] = 0.0
-k["Variables"][4]["Prior Distribution"]["Maximum"] = 15.0
+k["Variables"][4]["Prior Distribution"] = "Uniform 4"
 
 k["Variables"][5]["Name"] = "Psi 6"
-k["Variables"][5]["Prior Distribution"]["Type"] = "Univariate/Uniform"
-k["Variables"][5]["Prior Distribution"]["Minimum"] = 0.0
-k["Variables"][5]["Prior Distribution"]["Maximum"] = 15.0
+k["Variables"][5]["Prior Distribution"] = "Uniform 5"
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 1000

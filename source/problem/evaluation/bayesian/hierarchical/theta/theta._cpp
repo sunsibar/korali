@@ -32,6 +32,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
   _thetaProblemEngine->initialize();
 
   // Now inheriting Sub problem's variables
+  _k->_distributions = _thetaProblemEngine->_distributions;
   _k->_variables = _thetaProblemEngine->_variables;
 
   _thetaVariableCount = _thetaProblemEngine->_variables.size();
@@ -79,7 +80,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     {
       double logConditionalPrior = 0;
       for (size_t k = 0; k < _thetaVariableCount; k++)
-        logConditionalPrior += _psiProblem->_conditionalPriors[k]->getLogDensity( _thetaProblemSampleCoordinates[j][k] );
+        logConditionalPrior += _psiProblemEngine->_distributions[_psiProblem->_conditionalPriorIndexes[k]]->getLogDensity( _thetaProblemSampleCoordinates[j][k] );
 
       logValues[j] = logConditionalPrior - _thetaProblemSampleLogPriors[j];
     }
@@ -109,7 +110,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::evaluateLogLike
 
    double logConditionalPrior = 0.;
    for (size_t k = 0; k < _thetaVariableCount; k++)
-     logConditionalPrior += _psiProblem->_conditionalPriors[k]->getLogDensity(sample["Parameters"][k]);
+     logConditionalPrior += _psiProblemEngine->_distributions[_psiProblem->_conditionalPriorIndexes[k]]->getLogDensity(sample["Parameters"][k]);
 
    logValues[i] = logConditionalPrior - _precomputedLogDenominator[i];
  }

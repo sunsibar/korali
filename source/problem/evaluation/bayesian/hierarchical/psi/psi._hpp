@@ -28,6 +28,8 @@ class Psi : public korali::problem::evaluation::bayesian::Hierarchical
 
  public:
 
+ std::vector<size_t> _conditionalPriorIndexes;
+
  void updateConditionalPriors(korali::Sample& sample);
  void evaluateLogLikelihood(korali::Sample& sample) override;
  void initialize() override;
