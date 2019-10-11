@@ -27,6 +27,7 @@ do
   logEcho "-------------------------------------"
   logEcho " Entering Folder: $dir"
   pushd $dir >> $logFile 2>&1
+  timerStart
 
   log "[Korali] Removing any old result files..."
   rm -rf *_result* >> $logFile 2>&1
@@ -49,6 +50,7 @@ do
     check_result
   done
 
+  timerEnd
   popd >> $logFile 2>&1
   logEcho "-------------------------------------"
 done

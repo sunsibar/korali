@@ -10,9 +10,11 @@ for file in run*.py
 do
   logEcho "-------------------------------------"
   logEcho " Running $file"
-  logEcho "-------------------------------------"
+  timerStart
   ./"$file" >> $logFile 2>&1
   check_result
+  timerEnd
+  logEcho "-------------------------------------"
 done
 
 log "[Korali] Removing results..."

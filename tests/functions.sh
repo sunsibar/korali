@@ -19,18 +19,19 @@ tstart=0
 
 function timerStart()
 {
- tstart=$SECONDS
-
+ tstart=$(date +%s%N)
 }
 
 function timerEnd()
 {
- if [ $tstart -eq 0 ]
+ if [ $tstart -gt 0 ]
  then
-    duration=$(( $SECONDS-tstart ))
-    logEcho "Duration $duration seconds."
+    now=$(date +%s%N)
+    duration=$(((now - tstart)/1000000))
+    logEcho " Duration $duration milliseconds."
+    tstart=0
  else
-    logEcho "Timer not started (no measurements)."
+    logEcho " Timer not started (no measurements)."
  fi
 }
 
