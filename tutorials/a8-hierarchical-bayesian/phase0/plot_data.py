@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-for k in range(5):
+for k in range(10):
   dataFile = "../setup/data/data_set_" + str(k).zfill(3) + ".dat"
   x = np.loadtxt(dataFile)
   plt.plot( x[:,0], x[:,1], '-o')

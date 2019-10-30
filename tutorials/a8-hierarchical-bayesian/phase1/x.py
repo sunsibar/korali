@@ -26,8 +26,8 @@ k["Problem"]["Computational Model"] = lambda d: logistic( x, d);
 # Configuring the problem's random distributions
 k["Distributions"][0]["Name"] = "Uniform 0"
 k["Distributions"][0]["Type"] = "Univariate/Uniform"
-k["Distributions"][0]["Minimum"] = 280.0
-k["Distributions"][0]["Maximum"] = 320.0
+k["Distributions"][0]["Minimum"] = 260.0
+k["Distributions"][0]["Maximum"] = 340.0
 
 k["Distributions"][1]["Name"] = "Uniform 1"
 k["Distributions"][1]["Type"] = "Univariate/Uniform"
@@ -61,7 +61,7 @@ k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 2000
 k["Solver"]["Target Coefficient Of Variation"] = 0.6
 k["Solver"]["Covariance Scaling"] = 0.02
-k["Solver"]["Default Burn In"] = 2;
+k["Solver"]["Default Burn In"] = 4;
 
 k["Results Output"]["Path"] = resultsPath
 k["Console Output"]["Verbosity"] = "Detailed"

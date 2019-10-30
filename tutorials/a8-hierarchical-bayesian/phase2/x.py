@@ -13,8 +13,8 @@ k["Problem"]["Sub Problems"] = ['../setup/results_phase_1/' + str(i).zfill(3) + 
 
 k["Distributions"][0]["Name"] = "Conditional 0"
 k["Distributions"][0]["Type"] = "Univariate/Uniform"
-k["Distributions"][0]["Minimum"] = 280
-k["Distributions"][0]["Maximum"] = 320
+k["Distributions"][0]["Minimum"] = 260
+k["Distributions"][0]["Maximum"] = 340
 
 k["Distributions"][1]["Name"] = "Conditional 1"
 k["Distributions"][1]["Type"] = "Univariate/Normal"
@@ -83,8 +83,8 @@ k["Variables"][5]["Name"] = "Psi 6"
 k["Variables"][5]["Prior Distribution"] = "Uniform 5"
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
-k["Solver"]["Population Size"] = 1000
-k["Solver"]["Default Burn In"] = 3;
+k["Solver"]["Population Size"] = 5000
+k["Solver"]["Default Burn In"] = 6;
 k["Solver"]["Target Coefficient Of Variation"] = 0.6
 k["Solver"]["Covariance Scaling"] = 0.01
 
