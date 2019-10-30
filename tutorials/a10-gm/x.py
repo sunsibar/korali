@@ -12,7 +12,6 @@ for gm in gm_json:
   print(gm["mu"])
   print(gm["sigma"])
 
-exit()
 
 def likelihood( p ):
   x = p["Parameters"]
