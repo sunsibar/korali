@@ -3,8 +3,8 @@
 # Single function evaluation
 def model(p):
   x = p["Parameters"][0]
-  modifier = p["Job Id"] + 1
-  for x in range (10000):
+  modifier = p["Job Id"] + 5 
+  for x in range (100000):
    p["Evaluation"] = -0.5*x*x*modifier
 
 # Function and Gradient function evaluation

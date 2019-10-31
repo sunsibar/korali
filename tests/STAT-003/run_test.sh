@@ -4,7 +4,8 @@ source ../functions.sh
 
 ############# STEP 1 ##############
 
-logEcho "[Korali] Beginning minimization with non-finites tests..."
+logEcho "[Korali] Beginning STAT-003 test"
+logEcho "[Korali] minimization with non-finites tests..."
 
 for file in run*.py
 do

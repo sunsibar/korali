@@ -33,6 +33,11 @@ k["Distributions"][1]["Type"] = "Univariate/Uniform"
 k["Distributions"][1]["Minimum"] = -5.0
 k["Distributions"][1]["Maximum"] = +5.0
 
+k["Distributions"][2]["Name"] = "Uniform 2"
+k["Distributions"][2]["Type"] = "Univariate/Uniform"
+k["Distributions"][2]["Minimum"] = 0.0
+k["Distributions"][2]["Maximum"] = +5.0
+
 # Configuring the problem's variables and their prior distributions
 k["Variables"][0]["Name"] = "a"
 k["Variables"][0]["Bayesian Type"] = "Computational"

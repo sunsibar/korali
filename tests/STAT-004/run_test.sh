@@ -2,9 +2,9 @@
 
 source ../functions.sh
 
-logEcho "[Korali] Beginning Stat Test 002"
+logEcho "[Korali] Beginning Stat Test 004"
 
-for file in run*.py
+for file in run-*.py
 do
   logEcho "-------------------------------------"
   logEcho " Running $file"

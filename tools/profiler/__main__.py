@@ -8,7 +8,9 @@ import os.path
 from os import path
 import matplotlib
 from matplotlib import cm
+import matplotlib.colors as colors
 import argparse
+import numpy as np
 
 signal.signal(signal.SIGINT, lambda x, y: exit(0))
 
@@ -32,18 +34,18 @@ with open(filePath) as f:
  jsString = f.read()
 js  = json.loads(jsString)
 
-timeLists = []
+timelines = []
 labels = []
+solverCount = js["Solver Count"]
 elapsedTime = js["Elapsed Time"]
 
 for x in js["Timelines"]:
- if (not "Engine" in x):
-  timeLists.append(js["Timelines"][x])
+  timelines.append(js["Timelines"][x])
   labels.append(x)
 
-#### Creating Figure
+######################## Creating Time-based figure
 
-fig, axs = pyplot.subplots(3, 1, sharex=True, figsize=(25, 10))
+fig, axs = pyplot.subplots(2, 1, sharex=True, figsize=(25, 10))
 fig.subplots_adjust(hspace=0)
 
 #### Creating Timeline Plot
@@ -51,18 +53,21 @@ fig.subplots_adjust(hspace=0)
 # Calculating segment durations
 startLists = []
 durationLists = []
-for i in range(len(timeLists)):
- startLists.append([])
- durationLists.append([])
- for j in range(0, len(timeLists[i]), 2):
-  startLists[i].append(timeLists[i][j])
-  durationLists[i].append(timeLists[i][j+1] - timeLists[i][j])
-  
-# Declaring a figure "axs[0]" 
-pyplot.figure(1, figsize=(25, 10))
+solverIdLists = []
+for list in timelines:
+ currentStartList = []
+ currentDurationList = []
+ currentSolverIdList = []
+ for segment in list:
+  currentStartList.append(segment["Start Time"])
+  currentDurationList.append(segment["End Time"] - segment["Start Time"])
+  currentSolverIdList.append(segment["Solver Id"])
+ startLists.append(currentStartList)
+ durationLists.append(currentDurationList)
+ solverIdLists.append(currentSolverIdList)
   
 # Setting Y-axis limits 
-upperLimit = 10 + len(timeLists) * 10
+upperLimit = 10 + len(timelines) * 10
 axs[0].set_ylim(0, upperLimit) 
   
 # Setting X-axis limits 
@@ -70,7 +75,7 @@ axs[0].set_xlim(0, elapsedTime)
   
 # Setting ticks on y-axis 
 yticks = [] 
-for i in range(len(timeLists)):
+for i in range(len(timelines)):
  yticks.append(10 + i*10)
  
 axs[0].set_yticks([10, upperLimit-10]) 
@@ -80,9 +85,18 @@ axs[0].set_ylabel('Worker Timelines')
 # Setting graph attribute 
 axs[0].grid(False) 
 
+# Creating Color list
+cMap = pyplot.get_cmap('inferno')
+cNorm  = colors.Normalize(vmin=0, vmax=solverCount-1)
+scalarMap = cm.ScalarMappable(norm=cNorm, cmap=cMap)
+colorMap = [ scalarMap.to_rgba(i) for i in range(solverCount) ]
+
 for i in range(len(startLists)):
+ colorList = [ colorMap[solverIdLists[i][j]] for j in range(0, len(solverIdLists[i])) ]
  segList = [ (startLists[i][j], durationLists[i][j]) for j in range(0, len(startLists[i])) ]
- axs[0].broken_barh(segList, (yticks[i] - 5, 9), facecolors = ('tab:blue', 'blue') )
+ axs[0].broken_barh(segList, (yticks[i] - 5, 9), facecolors = tuple(colorList) )
+
+#('tab:blue', 'blue')
 
 #### Creating Efficiency Plot 
 N = 1000
@@ -129,40 +143,48 @@ axs[1].plot(xdim, averageEfficiency, '--')
 axs[1].legend(effLabels + [ 'Average' ])
 axs[1].set_ylabel('Worker Efficiency')  
  
-#### Creating Load Imbalance Plot
+######################## Creating Generation-based figure
 
-loadImbalances = []
-for ct in xdim:
- busyTime = 0.0
- maxThreadTime = 0.0
- for i in range(len(startLists)):
-  threadTime = 0.0
-  for j in range(len(startLists[i])):
-   if (startLists[i][j] > ct):
-    break;
-   if (startLists[i][j] + durationLists[i][j] > ct): 
-    threadTime += ct - startLists[i][j];
-    break;  
-   if (startLists[i][j] + durationLists[i][j] < ct): 
-    threadTime += durationLists[i][j];
-  if (threadTime > maxThreadTime): maxThreadTime = threadTime;
-  busyTime += threadTime
- averageThreadTime = busyTime / len(startLists)
- loadImbalance = 0.0
- if(busyTime > 0.0): loadImbalance = ((maxThreadTime - averageThreadTime) / busyTime)*100
- loadImbalances.append(loadImbalance)
+if (solverCount == 1):
+ maxGeneration = 0
+ for segment in timelines[0]:
+  if (segment["Current Generation"] > maxGeneration): maxGeneration = segment["Current Generation"]
+ 
+ genMaxTimes = []
+ genTotalTimes = []
+ genAvgTimes = []
+ genTimeCounts = []
+ genBalanceRatios = []
 
-# Declaring load imbalance plot
-minLimit = min(loadImbalances)*0.9
-maxLimit = max(loadImbalances)*1.1
-if (maxLimit > 1.0): maxLimit = 1.0
-if (minLimit < 0.0): minLimit = 0.0
-axs[2].set_ylim(minLimit, maxLimit)
-axs[2].set_xlim(0, elapsedTime)
-axs[2].plot(xdim, loadImbalances)
+ for i in range(maxGeneration):
+  genMaxTimes.append(0)
+  genTotalTimes.append(0)
+  genTimeCounts.append(0)
+  genAvgTimes.append(0)
+  genBalanceRatios.append(0)
+ 
+ for t in timelines:
+  for segment in t:
+   currentTime = segment["End Time"] - segment["Start Time"]
+   currGen = segment["Current Generation"] - 1
+   genTotalTimes[currGen] += currentTime
+   if (currentTime > genMaxTimes[currGen]): genMaxTimes[currGen] = currentTime
+   genTimeCounts[currGen] = genTimeCounts[currGen] + 1 
 
-# Setting labels for x-axis and y-axis
-axs[2].set_ylabel('Load Imbalance %')  
-axs[2].set_xlabel('Time Elapsed (seconds)') 
+ for i in range(maxGeneration):
+  genAvgTimes[i] = genTotalTimes[i] / genTimeCounts[i]
+  genBalanceRatios[i] = 1 + (genMaxTimes[i] - genAvgTimes[i]) / genAvgTimes[i]
+
+ xdim = np.arange(1, maxGeneration+1, 1.0)
+ figGen, genaxs = pyplot.subplots(1, 1, figsize=(25, 5))
+ genaxs.set_xticks(xdim)
+ genaxs.set_ylim(0, max(genAvgTimes))
+ genaxs.set_xlim(1, maxGeneration)
+ genaxs.plot(xdim, genAvgTimes)
+ 
+ genaxs.set_ylabel('Average Time Per Sample (s)')
+ genaxs.set_xlabel('Generation #')  
+ 
+ ####################### Creating Plots
 
 pyplot.show() 

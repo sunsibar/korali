@@ -37,6 +37,7 @@ class Engine : public korali::Module {
 
  // Multiple Solver Variables/Functions
  cothread_t _thread;
+ size_t _solverCount;
 
  pybind11::object getItem(pybind11::object key);
  void setItem(pybind11::object key, pybind11::object val);
