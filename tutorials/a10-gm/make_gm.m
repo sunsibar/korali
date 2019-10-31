@@ -16,7 +16,7 @@ Sigma(:,:,2) = [1   -1.5 0  0.1;
                 0.1    0  0  1];
 
 Ngm = size(Sigma,3);
-% Ngm = 1;
+Ngm = 1;
 N = size(Sigma,1);              
 
 for i = 1:Ngm
