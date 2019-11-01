@@ -12,10 +12,10 @@
 #include <gsl/gsl_multimin.h>
 
 typedef struct fparam_s {
-  const double *fj;
-  size_t        fn;
-  double        pj;
-  double        cov;
+  const double *loglike;  // likelihood values in current generation
+  size_t        Ns;       // population size of current generation
+  double        exponent; // annealing exponent of current generation
+  double        cov;      // target coefficient of variation
 } fparam_t;
 
 
@@ -168,8 +168,8 @@ void korali::solver::sampler::TMCMC::processEvaluation(const size_t sampleId)
 {
   double L = 0.0;
   if( std::isfinite(_chainCandidatesLogLikelihoods[sampleId]) && std::isfinite(_chainCandidatesLogPriors[sampleId]))
-    L = exp(   (_chainCandidatesLogLikelihoods[sampleId]-_chainLeadersLogLikelihoods[sampleId])*_annealingExponent
-             + (_chainCandidatesLogPriors[sampleId]-_chainLeadersLogPriors[sampleId]) );
+    L = exp(  (_chainCandidatesLogLikelihoods[sampleId]-_chainLeadersLogLikelihoods[sampleId])*_annealingExponent
+            + (_chainCandidatesLogPriors[sampleId]-_chainLeadersLogPriors[sampleId]) );
 
   if( L > _uniformGenerator->getRandomNumber() || _currentGeneration == 1 ){
     if( _currentChainStep[sampleId] > _currentBurnIn ) _acceptedSamplesCount++;
@@ -179,8 +179,8 @@ void korali::solver::sampler::TMCMC::processEvaluation(const size_t sampleId)
   }
 
   if( _currentChainStep[sampleId] > _currentBurnIn ){
-    _sampleDatabase.push_back(_chainLeaders[sampleId]);
-    _sampleLogLikelihoodDatabase.push_back(_chainLeadersLogLikelihoods[sampleId]);
+    _sampleDatabase.push_back( _chainLeaders[sampleId] );
+    _sampleLogLikelihoodDatabase.push_back( _chainLeadersLogLikelihoods[sampleId] );
     _sampleLogPriorDatabase.push_back(_chainLeadersLogPriors[sampleId]);
   }
 
@@ -190,9 +190,6 @@ void korali::solver::sampler::TMCMC::processEvaluation(const size_t sampleId)
 
 void korali::solver::sampler::TMCMC::processGeneration()
 {
-  std::vector<double>  flcp(_populationSize);
-  std::vector<double>  weight(_populationSize);
-  std::vector<double>  q(_populationSize);
   std::vector<unsigned int> numselections(_populationSize);
 
   // Compute annealing exponent for next generation
@@ -220,35 +217,42 @@ void korali::solver::sampler::TMCMC::processGeneration()
   }
 
   /* Compute weights and normalize*/
-  for (size_t i = 0; i < _populationSize; i++) flcp[i] = _sampleLogLikelihoodDatabase[i]*(_annealingExponent-_previousAnnealingExponent);
-  const double fjmax = gsl_stats_max(flcp.data(), 1, _populationSize);
-  for (size_t i = 0; i < _populationSize; i++) weight[i] = exp( flcp[i] - fjmax );
+  std::vector<double>  log_weight(_populationSize);
+  std::vector<double>  weight(_populationSize);
+  for (size_t i = 0; i < _populationSize; i++) log_weight[i] = _sampleLogLikelihoodDatabase[i]*(_annealingExponent-_previousAnnealingExponent);
 
-  double sum_weight = std::accumulate(weight.begin(), weight.end(), 0.0);
-  _logEvidence  += log(sum_weight) + fjmax - log(_populationSize);
+  const double loglikemax = gsl_stats_max(log_weight.data(), 1, _populationSize);
+  for( size_t i = 0; i < _populationSize; i++ )  weight[i] = exp( log_weight[i] - loglikemax );
 
-  for (size_t i = 0; i < _populationSize; i++) q[i] = weight[i]/sum_weight;
+  double sum_weight = std::accumulate( weight.begin(), weight.end(), 0.0 );
+
+  _logEvidence  += log(sum_weight) + loglikemax - log(_populationSize);
+
+  for (size_t i = 0; i < _populationSize; i++)  weight[i] = weight[i] / sum_weight;
 
   /* Sample candidate selections based on database entries */
-  _multinomialGenerator->getSelections(q, numselections, _populationSize);
+  _multinomialGenerator->getSelections( weight, numselections, _populationSize);
 
   /* Update mean and covariance */
   for (size_t i = 0; i < N; i++){
     _meanTheta[i] = 0;
-    for (size_t j = 0; j < _populationSize; j++) _meanTheta[i] += _sampleDatabase[j][i]*q[j];
+    for (size_t j = 0; j < _populationSize; j++) _meanTheta[i] += _sampleDatabase[j][i]*weight[j];
   }
 
-  for (size_t i = 0; i < N; i++) for (size_t j = i; j < N; ++j){
-    double s = 0.0;
-    for (size_t k = 0; k < _populationSize; ++k) s += q[k]*(_sampleDatabase[k][i]-_meanTheta[i])*(_sampleDatabase[k][j]-_meanTheta[j]);
-    _covarianceMatrix[i*N + j] = _covarianceMatrix[j*N + i] = s*_covarianceScaling;
+  for (size_t i = 0; i < N; i++){
+    for (size_t j = i; j < N; ++j){
+      double s = 0.0;
+      for (size_t k = 0; k < _populationSize; ++k)
+        s += weight[k]*( _sampleDatabase[k][i] - _meanTheta[i])*( _sampleDatabase[k][j]-_meanTheta[j] );
+      _covarianceMatrix[i*N + j] = _covarianceMatrix[j*N + i] = _covarianceScaling * s;
+    }
   }
 
-  gsl_matrix_view sigma = gsl_matrix_view_array(&_covarianceMatrix[0], N,N);
+  gsl_matrix_view sigma = gsl_matrix_view_array( &_covarianceMatrix[0], N, N );
   gsl_linalg_cholesky_decomp( &sigma.matrix );
 
   /* Init new chains */
-  std::fill(std::begin(_chainLengths), std::end(_chainLengths), 0);
+  std::fill( std::begin(_chainLengths), std::end(_chainLengths), 0);
 
   size_t leaderChainLen;
   size_t zeroCount = 0;
@@ -281,19 +285,21 @@ void korali::solver::sampler::TMCMC::processGeneration()
 }
 
 
-double korali::solver::sampler::TMCMC::tmcmc_objlogp(double x, const double *fj, size_t fn, double pj, double zero)
+double korali::solver::sampler::TMCMC::tmcmc_objlogp(double x, const double *loglike, size_t Ns, double exponent, double targetCOV )
 {
-  std::vector<double> weight(fn);
-  std::vector<double> q(fn);
-  const double fjmax = gsl_stats_max(fj, 1, fn);
+// x: proposed exponent
+  std::vector<double> weight(Ns);
+  const double loglike_max = gsl_stats_max(loglike, 1, Ns);
 
-  for(size_t i = 0; i <fn; i++) weight[i] = exp((fj[i]-fjmax)*(x-pj));
-  double sum_weight = std::accumulate(weight.begin(), weight.end(), 0.0);
-  for(size_t i = 0; i < fn; i++) q[i] = weight[i]/sum_weight;
+  for(size_t i = 0; i <Ns; i++)  weight[i] = exp( (loglike[i]-loglike_max) * (x-exponent) );
 
-  double mean_q = gsl_stats_mean(q.data(), 1, fn);
-  double std_q  = gsl_stats_sd_m(q.data(), 1, fn, mean_q);
-  double cov2   = (std_q/mean_q-zero);
+  double sum_weight = std::accumulate( weight.begin(), weight.end(), 0.0 );
+
+  for(size_t i = 0; i < Ns; i++) weight[i] = weight[i] / sum_weight;
+
+  double mean = gsl_stats_mean( weight.data(), 1, Ns);
+  double std  = gsl_stats_sd_m( weight.data(), 1, Ns, mean);
+  double cov2   = (std/mean) - targetCOV;
   cov2 *= cov2;
 
   if( isfinite(cov2)==false )
@@ -307,46 +313,43 @@ double korali::solver::sampler::TMCMC::objLog(const gsl_vector *v, void *param)
 {
   double x = gsl_vector_get(v, 0);
   fparam_t *fp = (fparam_t *) param;
-  return korali::solver::sampler::TMCMC::tmcmc_objlogp(x, fp->fj, fp->fn, fp->pj, fp->cov);
+  return korali::solver::sampler::TMCMC::tmcmc_objlogp(x, fp->loglike, fp->Ns, fp->exponent, fp->cov);
 }
 
 
-void korali::solver::sampler::TMCMC::minSearch(double const *fj, size_t fn, double pj, double objCov, double& xmin, double& fmin)
+void korali::solver::sampler::TMCMC::minSearch(double const *loglike, size_t Ns, double exponent, double objCov, double& xmin, double& fmin)
 {
   // Minimizer Options
-  const size_t MaxIter     = 1000;  /* Max number of search iterations */
-  const double Tol         = 1e-12; /* Tolerance for root finding */
-  const double Step        = 1e-8;  /* Search stepsize */
+  const size_t MaxIter = 1000;  /* Max number of search iterations */
+  const double Tol     = 1e-12; /* Tolerance for root finding */
+  const double Step    = 1e-8;  /* Search stepsize */
 
   const gsl_multimin_fminimizer_type *T;
   gsl_multimin_fminimizer *s = NULL;
   gsl_vector *ss, *x;
   gsl_multimin_function minex_func;
 
-  size_t iter     = 0;
+  size_t iter = 0;
   int status;
   double size;
 
   fparam_t fp;
-  fp.fj = fj;
-  fp.fn = fn;
-  fp.pj = pj;
+  fp.loglike  = loglike;
+  fp.Ns  = Ns;
+  fp.exponent  = exponent;
   fp.cov = objCov;
 
-  x = gsl_vector_alloc (1);
-  gsl_vector_set (x, 0, pj);
+  x = gsl_vector_alloc(1);
+  gsl_vector_set( x, 0, exponent );
 
-  ss = gsl_vector_alloc (1);
-  gsl_vector_set_all (ss, Step);
+  ss = gsl_vector_alloc(1);
+  gsl_vector_set_all( ss, Step );
 
   minex_func.n      = 1;
   minex_func.f      = objLog;
   minex_func.params = &fp;
 
-  // SELECT ONE MINIMIZER STRATEGY
   T = gsl_multimin_fminimizer_nmsimplex;
-  /* T = gsl_multimin_fminimizer_nmsimplex2; */
-  /* T = gsl_multimin_fminimizer_nmsimplex2rand; (warning: not reliable)  */
   s = gsl_multimin_fminimizer_alloc (T, 1);
   gsl_multimin_fminimizer_set (s, &minex_func, x, ss);
 
@@ -356,22 +359,22 @@ void korali::solver::sampler::TMCMC::minSearch(double const *fj, size_t fn, doub
   do{
     iter++;
     status = gsl_multimin_fminimizer_iterate(s);
-    size   = gsl_multimin_fminimizer_size (s);
-    status = gsl_multimin_test_size (size, Tol);
-  } while (status == GSL_CONTINUE && iter < MaxIter);
+    size   = gsl_multimin_fminimizer_size(s);
+    status = gsl_multimin_test_size(size, Tol);
+  } while( status == GSL_CONTINUE && iter < MaxIter );
 
   if(status == GSL_SUCCESS && s->fval >  Tol) korali::logInfo("Detailed", "Min Search converged but did not find minimum. \n");
   if(status != GSL_SUCCESS && s->fval <= Tol) korali::logInfo("Detailed", "Min Search did not converge but minimum found\n");
   if(status != GSL_SUCCESS && s->fval >  Tol) korali::logInfo("Detailed", "Min Search did not converge and did not find minimum\n");
   if(iter >= MaxIter) korali::logInfo("Detailed", "[Korali] Min Search MaxIter (%zu) reached\n", MaxIter);
 
-  if (s->fval <= Tol) {
+  if( s->fval <= Tol ){
     fmin = s->fval;
-    xmin = gsl_vector_get(s->x, 0);
+    xmin = gsl_vector_get( s->x, 0 );
   }
 
   if (xmin >= 1.0) {
-    fmin = tmcmc_objlogp(1.0, fj, fn, pj, objCov);
+    fmin = tmcmc_objlogp(1.0, loglike, Ns, exponent, objCov);
     xmin = 1.0;
   }
 

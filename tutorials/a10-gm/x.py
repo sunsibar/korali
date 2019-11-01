@@ -45,9 +45,9 @@ for i in range(4):
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 5000
-k["Solver"]["Target Coefficient Of Variation"] = 1
-k["Solver"]["Covariance Scaling"] = 0.02
-k["Solver"]["Default Burn In"] = 0;
+k["Solver"]["Target Coefficient Of Variation"] = 0.6
+k["Solver"]["Covariance Scaling"] = 0.2
+k["Solver"]["Default Burn In"] = 2;
 
 # k["Solver"]["Type"]  = "Sampler/MCMC"
 # k["Solver"]["Burn In"] = 500

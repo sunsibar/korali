@@ -20,7 +20,7 @@ x = data.Solver.Internal.SampleDatabase;
 % x = reshape(x,dim,Ns)';
 
 %%
-fig = figure(1); clf
+fig = figure(); clf
 % fig.Position = [539 130 1021 825];
 
 [ h, ax, BigAx, hhist, pax ] = plotmatrix_hist( x );
