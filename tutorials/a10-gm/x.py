@@ -51,7 +51,7 @@ for i in range(4):
 
 k["Solver"]["Type"]  = "Sampler/MCMC"
 k["Solver"]["Burn In"] = 500
-k["Solver"]["Termination Criteria"]["Max Samples"] = 100000
+k["Solver"]["Termination Criteria"]["Max Samples"] = 10000
 for i in range(4):
   k["Variables"][i]["Initial Mean"] = -1.0
   k["Variables"][i]["Initial Standard Deviation"] = 1.0

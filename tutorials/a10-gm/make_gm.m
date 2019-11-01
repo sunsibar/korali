@@ -2,12 +2,17 @@ clear
 
 addpath("../../tools/matlab/")
 addpath("../../tools/matlab/textprogressbar")
+
+multi = false
   
+
+if(multi)
 
 Mu = [ 1 0 0 1;
        5 6 7 -5];
 
 Sigma = zeros(4,4,2);
+
 
 Sigma(:,:,1) = [1   1.5 0  0; 
                 1.5  3  0  0; 
@@ -19,16 +24,35 @@ Sigma(:,:,2) = [1   -1.5 0  0.1;
                 0    0  1  0;
                 0.1    0  0  1];
 
+
 Ngm = size(Sigma,3);
 % Ngm = 1;
-N = size(Sigma,1);              
+N = size(Sigma,1);
+w = [0.8 0.2];
+
+
+else
+  Mu = [ 1 0 0 1];
+
+  Sigma = zeros(4,4,1);
+
+
+  Sigma(:,:,1) = [1   1.5 0  0; 
+                1.5  3  0  0; 
+                0    0  1  -0.6;
+                0    0  -0.6  1];
+              
+  Ngm = size(Sigma,3);
+  % Ngm = 1;
+  N = size(Sigma,1);
+  w = [1.0];
+end
 
 for i = 1:Ngm
   [~,p] = chol(Sigma(:,:,i));
   if(p~=0), error("Non positive definite (%d)",i); end
 end
                             
-w = [0.8 0.2];
 
 gm = gmdistribution(Mu,Sigma,w);
 
