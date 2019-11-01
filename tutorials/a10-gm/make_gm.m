@@ -3,9 +3,8 @@ clear
 addpath("../../tools/matlab/")
 addpath("../../tools/matlab/textprogressbar")
 
-multi = false
+multi = true
   
-
 if(multi)
 
 Mu = [ 1 0 0 1;
@@ -29,7 +28,6 @@ Ngm = size(Sigma,3);
 % Ngm = 1;
 N = size(Sigma,1);
 w = [0.8 0.2];
-
 
 else
   Mu = [ 1 0 0 1];
