@@ -1,5 +1,9 @@
 clear
 
+addpath("../../tools/matlab/")
+addpath("../../tools/matlab/textprogressbar")
+  
+
 Mu = [ 1 0 0 1;
        5 6 7 -5];
 
