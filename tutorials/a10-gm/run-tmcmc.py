@@ -23,7 +23,6 @@ def likelihood( p ):
   p["logLikelihood"] = np.log( y )
 
 
-
 import korali
 
 k = korali.initialize()
@@ -48,14 +47,6 @@ k["Solver"]["Population Size"] = 5000
 k["Solver"]["Target Coefficient Of Variation"] = 1
 k["Solver"]["Covariance Scaling"] = 0.02
 k["Solver"]["Default Burn In"] = 0;
-
-# k["Solver"]["Type"]  = "Sampler/MCMC"
-# k["Solver"]["Burn In"] = 500
-# k["Solver"]["Termination Criteria"]["Max Samples"] = 100000
-# for i in range(4):
-#   k["Variables"][i]["Initial Mean"] = 5.0
-#   k["Variables"][i]["Initial Standard Deviation"] = 2.0
-
 
 k["Console Output"]["Verbosity"] = "Detailed"
 
