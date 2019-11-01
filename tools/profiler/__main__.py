@@ -92,11 +92,10 @@ scalarMap = cm.ScalarMappable(norm=cNorm, cmap=cMap)
 colorMap = [ scalarMap.to_rgba(i) for i in range(solverCount) ]
 
 for i in range(len(startLists)):
- colorList = [ colorMap[solverIdLists[i][j]] for j in range(0, len(solverIdLists[i])) ]
+ colorList = [ 'tab:blue', 'blue' ]
+ if (solverCount > 1): colorList = [ colorMap[solverIdLists[i][j]] for j in range(0, len(solverIdLists[i])) ]
  segList = [ (startLists[i][j], durationLists[i][j]) for j in range(0, len(startLists[i])) ]
  axs[0].broken_barh(segList, (yticks[i] - 5, 9), facecolors = tuple(colorList) )
-
-#('tab:blue', 'blue')
 
 #### Creating Efficiency Plot 
 N = 1000

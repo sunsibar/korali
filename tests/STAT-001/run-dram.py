@@ -24,7 +24,7 @@ k["Variables"][0]["Initial Standard Deviation"] = 2.0
 # Configuring the MCMC sampler parameters
 k["Solver"]["Type"] = "Sampler/MCMC"
 k["Solver"]["Burn In"] = 500
-k["Solver"]["Rejection Levels"] = 3
+k["Solver"]["Rejection Levels"] = 2
 k["Solver"]["Termination Criteria"]["Max Samples"] = 10000
 
 # Running Korali
