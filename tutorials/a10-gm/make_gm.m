@@ -3,29 +3,34 @@ clear
 addpath("../../tools/matlab/")
 addpath("../../tools/matlab/textprogressbar")
 
-multi = true
+cases = 1;
 
-if(multi)
+switch cases
+  case 1
+    Mu = [ 1 0 0 1 ];
 
-Mu = [ 1 0 0 1;
-       5 6 7 -5];
+      Sigma(:,:,1) = [1   1.5 0  0;
+                      1.5  3  0  0;
+                      0    0  1  -0.6;
+                      0    0  -0.6  1];
+      w = [1];
+  case 2
+    Mu = [ 1 0 0 1;
+           5 6 7 -5];
 
-Sigma = zeros(4,4,2);
+    Sigma(:,:,1) = [1   1.5 0  0;
+                    1.5  3  0  0;
+                    0    0  1  -0.6;
+                    0    0  -0.6  1];
 
+    Sigma(:,:,2) = [1   -1.5 0  0.1;
+                    -1.5  3  0  0;
+                    0    0  1  0;
+                    0.1    0  0  1];
 
-Sigma(:,:,1) = [1   1.5 0  0;
-                1.5  3  0  0;
-                0    0  1  -0.6;
-                0    0  -0.6  1];
-
-Sigma(:,:,2) = [1   -1.5 0  0.1;
-                -1.5  3  0  0;
-                0    0  1  0;
-                0.1    0  0  1];
-
-
+    w = [0.8 0.2];         
+end
 Ngm = size(Sigma,3);
-Ngm = 1;
 N = size(Sigma,1);
 
 for i = 1:Ngm

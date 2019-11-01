@@ -43,18 +43,18 @@ for i in range(4):
   k["Variables"][i]["Prior Distribution"] = "Uniform 0"
 
 
-# k["Solver"]["Type"] = "Sampler/TMCMC"
-# k["Solver"]["Population Size"] = 5000
-# k["Solver"]["Target Coefficient Of Variation"] = 0.6
-# k["Solver"]["Covariance Scaling"] = 0.02
-# k["Solver"]["Default Burn In"] = 2;
+k["Solver"]["Type"] = "Sampler/TMCMC"
+k["Solver"]["Population Size"] = 5000
+k["Solver"]["Target Coefficient Of Variation"] = 0.6
+k["Solver"]["Covariance Scaling"] = 0.02
+k["Solver"]["Default Burn In"] = 2;
 
-k["Solver"]["Type"]  = "Sampler/MCMC"
-k["Solver"]["Burn In"] = 500
-k["Solver"]["Termination Criteria"]["Max Samples"] = 10000
-for i in range(4):
-  k["Variables"][i]["Initial Mean"] = -1.0
-  k["Variables"][i]["Initial Standard Deviation"] = 1.0
+# k["Solver"]["Type"]  = "Sampler/MCMC"
+# k["Solver"]["Burn In"] = 500
+# k["Solver"]["Termination Criteria"]["Max Samples"] = 100000
+# for i in range(4):
+#   k["Variables"][i]["Initial Mean"] = 5.0
+#   k["Variables"][i]["Initial Standard Deviation"] = 2.0
 
 
 k["Console Output"]["Verbosity"] = "Detailed"

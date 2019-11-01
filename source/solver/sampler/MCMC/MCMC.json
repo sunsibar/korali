@@ -1,5 +1,5 @@
 {
- "Configuration Settings": 
+ "Configuration Settings":
  [
    {
     "Name": [ "Burn In" ],
@@ -38,7 +38,7 @@
     "Description": "Learning rate of the Chain Covariance (only relevant for Adaptive Sampling)."
    }
  ],
- 
+
  "Termination Criteria":
  [
    {
@@ -47,10 +47,10 @@
     "Default": "5000",
     "Criteria": "_databaseEntryCount >= _maxSamples",
     "Description": "Number of Samples to Generate."
-   }   
+   }
  ]
  ,
- "Variables Configuration": 
+ "Variables Configuration":
  [
    {
     "Name": [ "Initial Mean" ],
@@ -63,8 +63,8 @@
     "Description": "Specifies the Standard Deviation for each variable. The proposal distribution is defined through a covariance matrix with the variance of the variables in its diagonal."
    }
  ],
- 
- "Internal Settings": 
+
+ "Internal Settings":
  [
    {
     "Name": [ "Cholesky Decomposition Covariance" ],
