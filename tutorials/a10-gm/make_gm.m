@@ -1,30 +1,38 @@
 clear
 
+addpath("../../tools/matlab/")
+addpath("../../tools/matlab/textprogressbar")
+
+multi = true
+
+if(multi)
+
 Mu = [ 1 0 0 1;
        5 6 7 -5];
 
 Sigma = zeros(4,4,2);
 
-Sigma(:,:,1) = [1   1.5 0  0; 
-                1.5  3  0  0; 
+
+Sigma(:,:,1) = [1   1.5 0  0;
+                1.5  3  0  0;
                 0    0  1  -0.6;
                 0    0  -0.6  1];
-              
-Sigma(:,:,2) = [1   -1.5 0  0.1; 
-                -1.5  3  0  0; 
+
+Sigma(:,:,2) = [1   -1.5 0  0.1;
+                -1.5  3  0  0;
                 0    0  1  0;
                 0.1    0  0  1];
 
+
 Ngm = size(Sigma,3);
 Ngm = 1;
-N = size(Sigma,1);              
+N = size(Sigma,1);
 
 for i = 1:Ngm
   [~,p] = chol(Sigma(:,:,i));
   if(p~=0), error("Non positive definite (%d)",i); end
 end
-                            
-w = [0.8 0.2];
+
 
 gm = gmdistribution(Mu,Sigma,w);
 
@@ -36,30 +44,30 @@ clf
 
 %% plot pdf
 for i = 1:N
-  
+
   y=0;
   t = linspace( min(x(:,i)), max(x(:,i)), 1000 );
-  
+
   for k=1:Ngm
     mu = Mu(k,:);
     sigma = Sigma(:,:,k);
     N = length(mu);
     y = y + w(k)*normpdf( t, mu(i), sqrt(sigma(i,i)) );
   end
-  
-  hold( pax(i), 'on' )  
+
+  hold( pax(i), 'on' )
   plot( pax(i), t, y, 'LineWidth', 3)
 end
 
 %% plot ellipses
 for k=1:size(Sigma,3)
-  
+
   mu = Mu(k,:);
   sigma = Sigma(:,:,k);
   N = length(mu);
 
   for i = 1:N
-    for j = i+1:N 
+    for j = i+1:N
       Sij = sigma([i j],[i j]);
       p = 0.99;
       s = -2 * log(1 - p);
@@ -71,7 +79,7 @@ for k=1:size(Sigma,3)
       plot( ax(i,j), a(2, :) + mu(j), a(1, :) + mu(i), 'LineWidth', 4);
     end
   end
-  
+
 end
 
 %% write json file
@@ -89,4 +97,3 @@ end
 fp = fopen('gm.json', 'w');
 fprintf(fp, '%s\n', jsonCode );
 fclose(fp);
-

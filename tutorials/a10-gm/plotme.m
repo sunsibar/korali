@@ -3,6 +3,9 @@
 
 clc; clear
 
+addpath("../../tools/matlab/")
+addpath("../../tools/matlab/textprogressbar")
+
 % file = '_korali_result/final.json';
 % data = jsondecode(fileread(file));
 % N = length(data.Variables);
