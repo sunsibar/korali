@@ -46,18 +46,19 @@ void korali::solver::sampler::MCMC::runGeneration()
   if ( _rejectionAlpha == 1.0 || _rejectionAlpha > _uniformGenerator->getRandomNumber() )
   {
     _acceptanceCount++;
+    _sampleAccepted = true;
     _chainLeaderEvaluation = _chainCandidatesEvaluations[i];
     _chainLeader = _chainCandidate[i];
-    _sampleAccepted = true;
   }
 
-  if ( _chainLength >= _burnIn ) if ( (_sampleAccepted == true) || (i == _rejectionLevels-1) )
-   updateDatabase(_chainLeader, _chainLeaderEvaluation);
  }
 
- updateState();
+ if ( (_chainLength >= _burnIn) && (_currentGeneration % _leap == 0) ) updateDatabase(_chainLeader, _chainLeaderEvaluation);
+ 
 
+ updateState();
  _chainLength++;
+
 }
 
 
@@ -80,12 +81,19 @@ void korali::solver::sampler::MCMC::initialize()
  _uniformGenerator = dynamic_cast<korali::distribution::univariate::Uniform*>(korali::Module::getModule(jsUniform));
  _uniformGenerator->initialize();
 
+ // Turn Off GSL Error Handler
+ gsl_set_error_handler_off();
+
  N = _k->_variables.size();
 
  _k->_consoleOutputFrequency = 500;
  _k->_resultsOutputFrequency = 500;
 
  if(_chainCovarianceScaling <= 0.0) korali::logError("Chain Covariance Scaling must be larger 0.0 (is %lf).\n", _chainCovarianceScaling);
+ if(_leap < 1) korali::logError( "Leap must be larger 0 (is %zu).\n", _leap);
+ if(_burnIn < 0) korali::logError( "Burn In must be larger equal 0 (is %zu).\n", _burnIn);
+ if(_rejectionLevels < 1) korali::logError( "Rejection Levels must be larger 0 (is %zu).\n", _rejectionLevels);
+ if(_nonAdaptionPeriod < 0) korali::logError( "Non Adaption Period must be larger equal 0 (is %zu).\n", _nonAdaptionPeriod);
 
  // Allocating MCMC memory
  _chainCandidate.resize(_rejectionLevels);
@@ -95,8 +103,8 @@ void korali::solver::sampler::MCMC::initialize()
  _chainLeader.resize(N);
  _chainCandidatesEvaluations.resize(_rejectionLevels);
  _rejectionAlphas.resize(_rejectionLevels);
- _sampleDatabase.resize(N*_maxChainLength);
- _sampleEvaluationDatabase.resize(_maxChainLength);
+ _sampleDatabase.resize(N*_maxSamples);
+ _sampleEvaluationDatabase.resize(_maxSamples);
  _chainMean.resize(N);
  _chainCovariancePlaceholder.resize(N*N);
  _chainCovariance.resize(N*N);
@@ -135,11 +143,18 @@ void korali::solver::sampler::MCMC::choleskyDecomp(const std::vector<double>& in
 
   int err = gsl_linalg_cholesky_decomp1(A);
 
-  for(size_t d = 0; d < N; ++d)  for(size_t e = 0; e < d; ++e)
+  if (err == GSL_EDOM)
   {
-      outL[d*N+e] = gsl_matrix_get(A,d,e);
+    korali::logWarning("Normal", "Chain Covariance negative definite (not updating Cholesky Decomposition of Chain Covariance).\n");
   }
-  for(size_t d = 0; d < N; ++d) outL[d*N+d] = gsl_matrix_get(A,d,d);
+  else
+  {
+    for(size_t d = 0; d < N; ++d)  for(size_t e = 0; e < d; ++e)
+    {
+      outL[d*N+e] = gsl_matrix_get(A,d,e);
+    }
+    for(size_t d = 0; d < N; ++d) outL[d*N+d] = gsl_matrix_get(A,d,d);
+  }
 
   gsl_matrix_free(A);
 }
@@ -206,8 +221,8 @@ void korali::solver::sampler::MCMC::updateState()
 
  _acceptanceRate = ( (double)_acceptanceCount/ (double)_chainLength );
 
- if(_databaseEntryCount == 1) for (size_t d = 0; d < N; d++) _chainMean[d] = _chainLeader[d];
- if(_databaseEntryCount <= 1) return;
+ if(_databaseEntryCount == 0) return;
+ if(_databaseEntryCount == 1) { for (size_t d = 0; d < N; d++) _chainMean[d] = _chainLeader[d]; return; }
 
  for (size_t d = 0; d < N; d++) for (size_t e = 0; e < d; e++)
  {
@@ -257,5 +272,5 @@ void korali::solver::sampler::MCMC::finalize()
 {
  korali::logInfo("Minimal", "Number of Generated Samples: %zu\n", _proposedSampleCount);
  korali::logInfo("Minimal", "Acceptance Rate: %.2f%%\n", 100*_acceptanceRate);
- if (_maxChainLength == _chainLength) korali::logInfo("Minimal", "Max Samples Reached.\n");
+ if (_databaseEntryCount == _maxSamples) korali::logInfo("Minimal", "Max Samples Reached.\n");
 }

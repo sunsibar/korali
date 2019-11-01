@@ -21,7 +21,7 @@ k["Problem"]["Objective Function"] = model
 
 k["Solver"]["Type"]  = "Sampler/MCMC"
 k["Solver"]["Burn In"] = 500
-k["Solver"]["Termination Criteria"]["Max Chain Length"] = 1000
+k["Solver"]["Termination Criteria"]["Max Samples"] = 1000
 
 k["Variables"][0]["Name"] = "X"
 k["Variables"][0]["Initial Mean"] = 0.0
@@ -34,10 +34,10 @@ k["Results Output"]["Path"] = resultDir
 k.run()
 
 print("\n-------------------------------------------------------------")
-print("Now continuing from Chain Length = 1000 until Gen 5000...")
+print("Now continuing from Sample #1000 until Sample #5000...")
 print("-------------------------------------------------------------\n")
 
 resultFile = korali.getLatestResult(resultDir)
 k.loadState(resultFile)
-k["Solver"]["Termination Criteria"]["Max Chain Length"] = 5000
+k["Solver"]["Termination Criteria"]["Max Samples"] = 5000
 k.run()

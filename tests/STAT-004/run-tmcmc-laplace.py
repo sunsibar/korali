@@ -3,8 +3,10 @@
 # Importing computational model
 import sys
 sys.path.append('./model')
+sys.path.append('./helpers')
 
 from model import *
+from helpers import *
 
 # Starting Korali's Engine
 import korali
@@ -13,7 +15,7 @@ k["Results Output"]["Path"] = "_result_run-tmcmc"
 
 # Setting up custom likelihood for the Bayesian Problem
 k["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
-k["Problem"]["Likelihood Model"] = lgaussian2dCustom
+k["Problem"]["Likelihood Model"] = llaplaceCustom
 
 # Configuring TMCMC parameters
 k["Solver"]["Type"] = "Sampler/TMCMC"
@@ -40,4 +42,9 @@ k["Variables"][1]["Bayesian Type"] = "Computational"
 k["Variables"][1]["Prior Distribution"] = "Uniform 1"
 
 # Running Korali
+k["Random Seed"] = 1337
 k.run()
+
+#verifyMean(k, 4.0)
+#verifyStd(k, 1.0)
+

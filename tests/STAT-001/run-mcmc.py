@@ -22,7 +22,7 @@ k["Problem"]["Objective Function"] = model
 # Configuring the MCMC sampler parameters
 k["Solver"]["Type"]  = "Sampler/MCMC"
 k["Solver"]["Burn In"] = 500
-k["Solver"]["Termination Criteria"]["Max Chain Length"] = 5000
+k["Solver"]["Termination Criteria"]["Max Samples"] = 5000
 
 # Defining problem's variables and their MCMC settings
 k["Variables"][0]["Name"] = "X"

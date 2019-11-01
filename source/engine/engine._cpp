@@ -16,6 +16,9 @@ void korali::Engine::run(size_t count, bool isDryRun)
  // Setting output file to stdout, by default.
  korali::setConsoleOutputFile(stdout);
 
+ // Saving solver count
+ _solverCount = count;
+
  // Initializing Profile Information
  _startTime = std::chrono::high_resolution_clock::now();
 
@@ -32,12 +35,12 @@ void korali::Engine::run(size_t count, bool isDryRun)
  if (_conduit->isRoot() == false) return;
 
  _thread = co_active();
- auto solvers = std::vector<korali::Solver*>(count);
+ auto solvers = std::vector<korali::Solver*>(_solverCount);
 
  // Creating results directory
  mkdir(_resultsOutputPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
- for (size_t i = 0; i < count; i++)
+ for (size_t i = 0; i < _solverCount; i++)
  {
   auto js = nlohmann::json();
   getConfiguration(js);
@@ -50,7 +53,7 @@ void korali::Engine::run(size_t count, bool isDryRun)
   // Creating Solver Results directory and logFile
   char dirName[256];
   sprintf(dirName, "solver%05d", i);
-  if (count > 1)
+  if (_solverCount > 1)
   {
     solvers[i]->_subDirPath = _resultsOutputPath + "/" + dirName;
     mkdir(solvers[i]->_subDirPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -77,24 +80,24 @@ void korali::Engine::run(size_t count, bool isDryRun)
  {
   bool executed = false;
 
-  for (size_t i = 0; i < count; i++) if (solvers[i]->_isFinished == false)
+  for (size_t i = 0; i < _solverCount; i++) if (solvers[i]->_isFinished == false)
   {
-   if (count > 1) korali::setConsoleOutputFile(solvers[i]->_logFile);
+   if (_solverCount > 1) korali::setConsoleOutputFile(solvers[i]->_logFile);
    _currentSolver = solvers[i];
 
    co_switch(solvers[i]->_thread);
 
-   if (count > 1) korali::setConsoleOutputFile(stdout);
+   if (_solverCount > 1) korali::setConsoleOutputFile(stdout);
    executed = true;
-   if (count > 1) if (solvers[i]->_isFinished == true) korali::logInfo("Normal", "Job %lu has finished.\n", i);
+   if (_solverCount > 1) if (solvers[i]->_isFinished == true) korali::logInfo("Normal", "Job %lu has finished.\n", i);
   }
 
   if (executed == false) break;
  }
 
- if (count > 1)
+ if (_solverCount > 1)
  {
-  korali::logInfo("Minimal", "All %lu jobs have finished correctly.\n", count);
+  korali::logInfo("Minimal", "All %lu jobs have finished correctly.\n", _solverCount);
   korali::logInfo("Normal", "Elapsed Time: %.3fs\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count());
   korali::logInfo("Normal", "Results saved to folder: '%s'\n", _resultsOutputPath.c_str());
  }
@@ -137,6 +140,7 @@ void korali::Engine::saveState(korali::Solver* solver, std::string dirName, std:
  fileName = "./" + dirName + "/" + fileName;
  korali::JsonInterface::saveJsonToFile(fileName.c_str(), _js.getJson());
 
+ __profiler["Solver Count"] = _solverCount;
  __profiler["Elapsed Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
  fileName = "./" + _resultsOutputPath + "/profiling.json";
  korali::JsonInterface::saveJsonToFile(fileName.c_str(), __profiler);

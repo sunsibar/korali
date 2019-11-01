@@ -8,10 +8,14 @@ void korali::conduit::Simple::processSample(korali::Sample& sample)
 {
  _modelEvaluationCount++;
 
- __profiler["Timelines"]["Worker 0"] += std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
+ auto js = nlohmann::json();
+ js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
 
  _k->_problem->runOperation(sample["Operation"], sample);
 
- __profiler["Timelines"]["Worker 0"] += std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
+ js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
+ js["Current Generation"] = _currentSolver->_currentGeneration;
+ js["Solver Id"] = _currentSolver->_solverId;
+ __profiler["Timelines"]["Worker 0"] += js;
 }
 
