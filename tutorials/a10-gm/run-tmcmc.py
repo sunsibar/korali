@@ -20,7 +20,10 @@ def likelihood( p ):
   for gm in gm_json:
     y += gm["w"] *  multivariate_normal.pdf(x, mean=gm["mu"], cov=gm["sigma"])
 
-  p["logLikelihood"] = np.log( y )
+  ly = np.log(y)
+  if (ly <= -5000.0):
+    ly = -5000.0
+  p["logLikelihood"] = ly
 
 
 import korali
@@ -44,9 +47,10 @@ for i in range(4):
 
 k["Solver"]["Type"] = "Sampler/TMCMC"
 k["Solver"]["Population Size"] = 5000
-k["Solver"]["Target Coefficient Of Variation"] = 0.6
-k["Solver"]["Covariance Scaling"] = 0.2
-k["Solver"]["Default Burn In"] = 2;
+#k["Solver"]["Max Chain Length"] = 100
+#k["Solver"]["Target Coefficient Of Variation"] = 0.2
+#k["Solver"]["Covariance Scaling"] = 0.04
+k["Solver"]["Default Burn In"] = 3;
 
 k["Console Output"]["Verbosity"] = "Detailed"
 

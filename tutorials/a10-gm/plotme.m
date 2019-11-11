@@ -6,18 +6,17 @@ clc; clear
 addpath("../../tools/matlab/")
 addpath("../../tools/matlab/textprogressbar")
 
-% file = '_korali_result/final.json';
-% data = jsondecode(fileread(file));
-% N = length(data.Variables);
-% Ns = data.Solver.PopulationS  ize;
-% x = data.Solver.Internal.SampleDatabase;
-
 file = '_korali_result/final.json';
 data = jsondecode(fileread(file));
+
+N = length(data.Variables);
+Ns = data.Solver.PopulationSize;
 x = data.Solver.Internal.SampleDatabase;
-Ns = data.Solver.Internal.DatabaseEntryCount;
-dim = length(data.Solver.Internal.SampleDatabase)/Ns;
-x = reshape(x,dim,Ns)';
+
+% x = data.Solver.Internal.SampleDatabase;
+% Ns = data.Solver.Internal.DatabaseEntryCount;
+% dim = length(data.Solver.Internal.SampleDatabase)/Ns;
+%x = reshape(x,dim,Ns)';
 
 %%
 fig = figure(); clf
