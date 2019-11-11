@@ -25,17 +25,24 @@ def logistic_reference( s ):
 
   X = np.linspace( 0.0, 10.0, num=21 )
   Y = np.zeros(X.size)
+  print(th)
   for i in range(X.size):
     f = np.exp(th[2]*X[i])
-    Y[i] = ( th[0]*th[1]*f )/( th[0] + th[1]*(f-1) )
+    if (th[0]*th[1]*f == 0): 
+        Y[i] = 0.0
+    else:
+        print( th[0] + th[1]*(f-1) )
+        Y[i] = ( th[0]*th[1]*f )/( th[0] + th[1]*(f-1) )
 
   Y = Y +  np.random.normal( 0, th[3], X.size )
+
   k = s["Sample Id"]
 
   dataFolder = "../setup/data/"
   if not os.path.exists(dataFolder): os.makedirs(dataFolder)
-  dataFile = dataFolder + "/data_set_" + str(k).zfill(3) + ".dat"
-  np.savetxt( dataFile,  np.transpose([ X, Y ]) )
+  dataFile = dataFolder + "data_set_" + str(k).zfill(3) + ".dat"
+  dat = np.transpose([X, Y])
+  np.savetxt(dataFile, dat)
 
 
 

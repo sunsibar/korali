@@ -19,13 +19,14 @@ void korali::solver::Executor::runGeneration()
   _maxModelEvaluations     = std::min(_maxModelEvaluations, _sampleCount);
   _executionsPerGeneration = std::min(_executionsPerGeneration, _maxModelEvaluations - _modelEvaluationCount);
   
-  std::vector<double> sampleData(_variableCount);
   std::vector<korali::Sample> samples(_executionsPerGeneration);
   for (size_t i = 0; i < _executionsPerGeneration; i++)
   {
     
     printf("c %zu mme % zu epg %zu\n", _modelEvaluationCount, _maxModelEvaluations, _executionsPerGeneration);
-    for (size_t j = 0; j < _variableCount; j++) sampleData[j] = _k->_variables[j]->_loadedValues[_modelEvaluationCount];
+    std::vector<double> sampleData;
+    for (size_t j = 0; j < _variableCount; j++) sampleData.push_back(_k->_variables[j]->_loadedValues[_modelEvaluationCount]);
+    //for (size_t j = 0; j < _variableCount; j++) sampleData[j] = _k->_variables[j]->_loadedValues[_modelEvaluationCount];
 
     korali::logInfo("Detailed", "Running sample %zu with values:\n         ", _modelEvaluationCount);
     for(auto& x : sampleData) korali::logData("Detailed", " %le   ", x);
@@ -34,11 +35,14 @@ void korali::solver::Executor::runGeneration()
     samples[i]["Operation"]  = "Execute";
     samples[i]["Parameters"] = sampleData;
     samples[i]["Sample Id"]  = _modelEvaluationCount;
-    _k->_conduit->start(samples[i]);
     _modelEvaluationCount++;
+    _k->_conduit->start(samples[i]);
+    printf(" end loop gen \n");
   }
 
+    printf(" end gen1 \n");
   _k->_conduit->waitAll(samples);
+    printf(" end gen2 \n");
 }
 
 void korali::solver::Executor::printGenerationBefore()
