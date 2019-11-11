@@ -31,10 +31,10 @@ void korali::distribution::multivariate::Normal::updateDistribution()
 
  size_t sideSize = sqrt(covarianceMatrixSize);
  if ((sideSize * sideSize) != covarianceMatrixSize)
-  korali::logError("Size of Multivariate Normal covariance matrix size (%lu) is not a perfect square number.\n", covarianceMatrixSize);
+  korali::logError("Size of Multivariate Normal covariance matrix size (%lu) is not a square.\n", covarianceMatrixSize);
 
  size_t meanSize = _meanVector.size();
- if (sideSize != meanSize) korali::logError("Size of Multivariate Normal mean vector (%lu) is not the same as the side of covariance matrix (%lu).\n", meanSize, sideSize);
+ if (sideSize != meanSize) korali::logError("Dimension mismatch in Multivariate Normal mean vector (%lu) and covariance matrix (%lu).\n", meanSize, sideSize);
 
  _workVector.resize(meanSize);
 

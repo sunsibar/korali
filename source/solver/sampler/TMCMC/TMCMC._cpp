@@ -72,27 +72,19 @@ void korali::solver::sampler::TMCMC::initialize()
   _chainLengths.resize(_populationSize);
 
   // Init Generation
-  _currentBurnIn           = 0;
   _annealingExponent       = 0.0;
   _logEvidence             = 0.0;
   _coefficientOfVariation  = 0.0;
-  _finishedChainsCount     = 0;
-  _proposalsAcceptanceRate = 1.0;
-  _selectionAcceptanceRate = 1.0;
-  _acceptedSamplesCount    = _populationSize;
   _chainCount              = _populationSize;
 
-  // Initializing Runtime Variables
-  for (size_t c = 0; c < _populationSize; c++) _currentChainStep[c] = 0;
+  // Initializing Chain Length first Generation
   for (size_t c = 0; c < _populationSize; c++) _chainLengths[c] = 1;
-  for (size_t c = 0; c < _populationSize; c++) _chainPendingEvaluation[c] = false;
 }
 
 
 void korali::solver::sampler::TMCMC::runGeneration()
 {
   prepareGeneration();
-
   std::vector<korali::Sample> samples(_chainCount);
 
   while (_finishedChainsCount < _chainCount)
@@ -102,13 +94,14 @@ void korali::solver::sampler::TMCMC::runGeneration()
      if (_currentChainStep[c] < _chainLengths[c] + _currentBurnIn)
      if (_chainPendingEvaluation[c] == false)
      {
+       generateCandidate(c);
        _chainPendingEvaluation[c] = true;
-       samples[c]["Operation"] = "Basic Evaluation";
-       samples[c]["Parameters"] = _chainCandidates[c];
-       samples[c]["Sample Id"] = c;
-       _k->_conduit->start(samples[c]);
+       samples[c]["Operation"]    = "Basic Evaluation";
+       samples[c]["Parameters"]   = _chainCandidates[c];
+       samples[c]["Sample Id"]    = c;
        _currentChainStep[c]++;
        _modelEvaluationCount++;
+       _k->_conduit->start(samples[c]);
       }
     }
     size_t finishedId = _k->_conduit->waitAny(samples);
@@ -135,7 +128,6 @@ void korali::solver::sampler::TMCMC::prepareGeneration()
   _finishedChainsCount  = 0;
   for (size_t c = 0; c < _chainCount; c++)  _currentChainStep[c] = 0;
   for (size_t c = 0; c < _chainCount; c++)  _chainPendingEvaluation[c] = false;
-  for (size_t c = 0; c < _chainCount; c++)  generateCandidate(c);
 }
 
 
@@ -146,10 +138,6 @@ void korali::solver::sampler::TMCMC::generateCandidate(size_t c)
     for (size_t d = 0; d < N; d++) _chainCandidates[c][d] = _k->_distributions[_k->_variables[d]->_distributionIndex]->getRandomNumber();
     return;
   }
-
-  gsl_vector_view out_view   = gsl_vector_view_array(&_chainCandidates[c][0], N);
-  gsl_matrix_view sigma_view = gsl_matrix_view_array(&_covarianceMatrix[0], N,N);
-  gsl_vector_view mean_view  = gsl_vector_view_array(&_chainLeaders[c][0], N);
 
   std::vector<double> _currentMean;
   for (size_t i = 0; i < N; i++) _currentMean.push_back(_chainLeaders[c][i]);
@@ -171,9 +159,8 @@ void korali::solver::sampler::TMCMC::processEvaluation(const size_t sampleId)
     L = exp(  (_chainCandidatesLogLikelihoods[sampleId]-_chainLeadersLogLikelihoods[sampleId])*_annealingExponent
             + (_chainCandidatesLogPriors[sampleId]-_chainLeadersLogPriors[sampleId]) );
 
-  if( _currentChainStep[sampleId] > _currentBurnIn )
   if( L > _uniformGenerator->getRandomNumber() || _currentGeneration == 1 ){
-    _acceptedSamplesCount++;
+    if( _currentChainStep[sampleId] > _currentBurnIn ) _acceptedSamplesCount++;
     _chainLeaders[sampleId]               = _chainCandidates[sampleId];
     _chainLeadersLogPriors[sampleId]      = _chainCandidatesLogPriors[sampleId];
     _chainLeadersLogLikelihoods[sampleId] = _chainCandidatesLogLikelihoods[sampleId];
@@ -220,7 +207,6 @@ void korali::solver::sampler::TMCMC::processGeneration()
   /* Compute weights and normalize*/
   std::vector<double>  log_weight(_populationSize);
   std::vector<double>  weight(_populationSize);
-  printf("pa %lf\n", _previousAnnealingExponent);
   for (size_t i = 0; i < _populationSize; i++) log_weight[i] = _sampleLogLikelihoodDatabase[i]*(_annealingExponent-_previousAnnealingExponent);
 
   const double loglikemax = gsl_stats_max(log_weight.data(), 1, _populationSize);
