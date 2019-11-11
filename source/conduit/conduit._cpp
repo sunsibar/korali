@@ -93,16 +93,12 @@ void korali::Conduit::waitAll(std::vector<korali::Sample>& samples)
  {
   isFinished = true;
  
-  printf("s size %zu\n", samples.size());
   for (size_t i = 0; i < samples.size(); i++)
    if (samples[i]._state == SampleState::waiting || samples[i]._state == SampleState::initialized)
    {
-    printf("sup %zu\n", samples.size());
     isFinished = false;
     samples[i]._state = SampleState::running;
-    printf("sup2 %zu\n", samples.size());
     co_switch(samples[i]._sampleThread);
-    printf("end sup %zu\n", samples.size());
    }
 
   if (isFinished == false) co_switch(__conduit->_k->_thread);
