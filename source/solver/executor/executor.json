@@ -4,7 +4,7 @@
    {
     "Name": [ "Executions Per Generation" ],
     "Type": "size_t",
-    "Default": "+INFINITY",
+    "Default": "std::numeric_limits<size_t>::max()",
     "Description": "Specifies the number of model executions per generation. By default this setting is 0, meaning that all executions will be performed in the first generation. For values greater 0, executions will be split into batches and split int generations for intermediate output."
    }
  ],
