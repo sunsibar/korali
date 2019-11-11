@@ -35,12 +35,12 @@ assert_value( k["Solver"]["Population Size"], 5000 )
 
 # Test Internals
 
-assert_value( k["Solver"]["Internal"]["Accepted Samples Count"], 5000 )
+assert_value( k["Solver"]["Internal"]["Accepted Samples Count"], 0 )
 assert_value( k["Solver"]["Internal"]["Annealing Exponent"], 0.0 )
 assert_value( k["Solver"]["Internal"]["Coefficient Of Variation"], 0.0 )
 assert_value( k["Solver"]["Internal"]["Covariance Matrix"][0], 0.0 )
-assert_value( k["Solver"]["Internal"]["Proposals Acceptance Rate"], 1.0 )
-assert_value( k["Solver"]["Internal"]["Selection Acceptance Rate"], 1.0 )
+assert_value( k["Solver"]["Internal"]["Proposals Acceptance Rate"], 0.0 )
+assert_value( k["Solver"]["Internal"]["Selection Acceptance Rate"], 0.0 )
 
 # Test Variables
 
