@@ -22,7 +22,7 @@ k["Variables"][0]["Loaded Values"] = np.random.normal( 10, 4, N ).tolist()
 k["Variables"][1]["Loaded Values"] = np.random.lognormal( 0, 1, N ).tolist()
 
 k["Solver"]["Type"] = "Executor"
-k["Solver"]["Executions Per Generation"] = 1
+k["Solver"]["Executions Per Generation"] = 2
 k["Console Output"]["Verbosity"] = "Detailed"
 
 k.run()
