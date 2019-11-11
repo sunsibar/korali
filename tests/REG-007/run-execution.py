@@ -22,7 +22,7 @@ k["Console Output"]["Verbosity"] = "Detailed"
 
 k.run()
 
-assert k["Solver"]["Internal"]["Execution Count"] == 5
+assert k["Solver"]["Internal"]["Model Evaluation Count"] == 5
 assert k["Solver"]["Internal"]["Sample Count"] == 5
 assert k["Solver"]["Internal"]["Variable Count"] == 2
 assert k["Solver"]["Internal"]["Current Generation"] == 3

@@ -38,7 +38,7 @@ void korali::Engine::run(size_t count, bool isDryRun)
  auto solvers = std::vector<korali::Solver*>(_solverCount);
 
  // Creating results directory
- mkdir(_resultsOutputPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+ if (_resultsOutputActive == true) mkdir(_resultsOutputPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
  for (size_t i = 0; i < _solverCount; i++)
  {
@@ -99,7 +99,7 @@ void korali::Engine::run(size_t count, bool isDryRun)
  {
   korali::logInfo("Minimal", "All %lu jobs have finished correctly.\n", _solverCount);
   korali::logInfo("Normal", "Elapsed Time: %.3fs\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count());
-  korali::logInfo("Normal", "Results saved to folder: '%s'\n", _resultsOutputPath.c_str());
+  if (_resultsOutputActive) korali::logInfo("Normal", "Results saved to folder: '%s'\n", _resultsOutputPath.c_str());
  }
 }
 
@@ -135,6 +135,9 @@ void korali::Engine::saveState(korali::Solver* solver, std::string dirName, std:
  this->getConfiguration(_js.getJson());
  solver->getConfiguration(_js.getJson()["Solver"]);
 
+ // Donst save if incative
+ if (_resultsOutputActive == false) return;
+ 
  // Only the root rank saves files
  if (!_conduit->isRoot()) return;
  fileName = "./" + dirName + "/" + fileName;

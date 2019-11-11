@@ -124,14 +124,14 @@
     "Name": [ "Min Value" ],
     "Type": "double",
     "Default": "-INFINITY",
-    "Criteria": "_bestEverValue < _minValue",
+    "Criteria": "-_bestEverValue <= _minValue",
     "Description": "Specifies the minimum target fitness to stop minimization."
    },
    {
     "Name": [ "Max Value" ],
     "Type": "double",
     "Default": "+INFINITY",
-    "Criteria": "_bestEverValue > _maxValue",
+    "Criteria": "+_bestEverValue >= _maxValue",
     "Description": "Specifies the maximum target fitness to stop maximization."
    },
    {
@@ -374,7 +374,7 @@
    {
     "Name": [ "Infeasible Sample Count" ],
     "Type": "size_t",
-    "Description": "Keeps count of the number of function evaluations so far."
+    "Description": "Keeps count of the number of infeasible samples."
    },
    {
     "Name": [ "Maximum Diagonal Covariance Matrix Element" ],

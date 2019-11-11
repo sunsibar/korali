@@ -44,6 +44,7 @@ void korali::solver::optimizer::Rprop::evaluateFunctionAndGradient( void )
     samples[i]["Operation"]  = "Basic Evaluation";
     samples[i]["Parameters"] = _currentX;
     samples[i]["Sample Id"]  = i;
+    _modelEvaluationCount++;
     _k->_conduit->start(samples[i]);
   }
 

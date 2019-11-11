@@ -1,4 +1,4 @@
-BINARIES = run-cmaes run-tmcmc
+BINARIES = run-cmaes-direct run-cmaes run-lmcma-direct run-lmcma run-tmcmc
 KORALICXX=$(shell python3 -m korali.cxx --compiler)
 KORALICFLAGS=`python3 -m korali.cxx --cflags`
 KORALILIBS=`python3 -m korali.cxx --libs`

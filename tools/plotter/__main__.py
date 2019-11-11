@@ -59,10 +59,10 @@ def main(path, allFiles, live, generation, mean, check, test):
 
  if solverName == 'Rprop':
    # TODO
-   print("[Korali] No plotter for solver of type Executor available...")
+   print("[Korali] No plotter for solver of type Rprop available...")
    exit(0)
 
- print("[Korali] Error: Did not recognize method for plotting...")
+ print("[Korali] Error: Did not recognize solver '{0}' for plotting...".format(solverName))
  exit(-1)
 
 

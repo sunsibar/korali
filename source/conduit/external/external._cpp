@@ -85,8 +85,6 @@ void korali::conduit::External::worker(int workerId)
 
 void korali::conduit::External::processSample(korali::Sample& sample)
 {
- _modelEvaluationCount++;
-
  while (_launcherQueue.empty())
  {
   sample._state = SampleState::waiting;

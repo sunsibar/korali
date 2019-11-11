@@ -21,7 +21,7 @@
    {
     "Name": [ "Per Generation Burn In" ],
     "Type": "std::vector<size_t>",
-    "Default": "std::vector<size_t>(0)",
+    "Default": "{ }",
     "Description": "Specifies the number of additional TMCMC steps per chain at specified generations (this property will overwrite Default Burn In at specified generations)."
    },
    {

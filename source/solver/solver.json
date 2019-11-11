@@ -12,6 +12,22 @@
     "Type": "bool",
     "Default": "false",
     "Description": "Indicates whether execution has reached a termination criterion."
+   }, 
+   {
+    "Name": [ "Model Evaluation Count" ],
+    "Type": "size_t",
+    "Default": "0",
+    "Description": "Keeps track on the number of calls to the computational model."
+   }
+ ],
+ "Termination Criteria":
+ [ 
+   {
+    "Name": [ "Max Model Evaluations" ],
+    "Type": "size_t",
+    "Default": "std::numeric_limits<size_t>::max()",
+    "Criteria": "_maxModelEvaluations <= _modelEvaluationCount",
+    "Description": "Specifies the maximum allowed evaluations of the computational model."
    }
  ]
 }

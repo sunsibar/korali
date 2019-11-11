@@ -43,6 +43,7 @@ def appendStates(state, lists, stateNames):
 def appendStateVectors(state, lists, stateNames):
     for i, name in enumerate(stateNames):
         for dim, data in enumerate(state[name]):
+            print(dim)
             lists[i][dim].append(data)
 
 # Verify if figure exists and exit if not

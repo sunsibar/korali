@@ -38,6 +38,12 @@ void korali::solver::optimizer::CMAES::initialize()
  if (isEvaluationProblem == false)
   korali::logError("CMAES can only optimize problems of type 'Evaluation' or derived.\n");
 
+ if(isDirectProblem == true)
+ if (_directProblem->_objective == "Maximize") _bestEverValue = -std::numeric_limits<double>::infinity();
+ else /* Minimize */                           _bestEverValue = +std::numeric_limits<double>::infinity();
+ 
+ _bestEverValue = -std::numeric_limits<double>::infinity();
+
  N = _k->_variables.size();
 
  if (_currentGeneration > 1) return;
@@ -187,10 +193,9 @@ void korali::solver::optimizer::CMAES::initialize()
 
  initCovariance();
 
- _infeasibleSampleCount = 0;
+ _infeasibleSampleCount   = 0;
  _resampledParameterCount = 0;
 
- _bestEverValue = -std::numeric_limits<double>::infinity();
  _conjugateEvolutionPathL2Norm = 0.0;
 
  for (size_t i = 0; i < N; i++) _currentMean[i] = _previousMean[i] = _k->_variables[i]->_initialMean;
@@ -214,6 +219,7 @@ void korali::solver::optimizer::CMAES::runGeneration()
   samples[i]["Operation"] = "Basic Evaluation";
   samples[i]["Parameters"] = _samplePopulation[i];
   samples[i]["Sample Id"] = i;
+  _modelEvaluationCount++;
   _k->_conduit->start(samples[i]);
  }
 
@@ -396,7 +402,6 @@ void korali::solver::optimizer::CMAES::prepareGeneration()
  updateEigensystem(_auxiliarCovarianceMatrix);
  for (size_t i = 0; i < _currentPopulationSize; ++i)
  {
-   size_t initial_infeasible = _infeasibleSampleCount;
    sampleSingle(i);
 
    korali::Sample sample;
@@ -469,7 +474,7 @@ void korali::solver::optimizer::CMAES::updateDistribution()
  sort_index(_valueVector, _sortingIndex, _currentPopulationSize);
 
  if( (_areConstraintsDefined == false) ||  _isViabilityRegime )
-  _bestValidSample = 0;
+  _bestValidSample = _sortingIndex[0];
  else
  {
   _bestValidSample = -1;
@@ -528,10 +533,11 @@ void korali::solver::optimizer::CMAES::updateDistribution()
     _conjugateEvolutionPath[d] = (1. - _sigmaCumulationFactor) * _conjugateEvolutionPath[d] + sqrt(_sigmaCumulationFactor * (2. - _sigmaCumulationFactor) * _effectiveMu) * sum;
 
     /* calculate norm(ps)^2 */
-    _conjugateEvolutionPathL2Norm += _conjugateEvolutionPath[d] * _conjugateEvolutionPath[d];
+    _conjugateEvolutionPathL2Norm += std::pow(_conjugateEvolutionPath[d], 2.0);
  }
+ _conjugateEvolutionPathL2Norm = std::sqrt(_conjugateEvolutionPathL2Norm);
 
- int hsig = (1.4 + 2.0/(N+1) > sqrt(_conjugateEvolutionPathL2Norm) / sqrt(1. - pow(1.-_sigmaCumulationFactor, 2.0*(1.0+_currentGeneration))) / _chiSquareNumber);
+ int hsig = (1.4 + 2.0/(N+1) > _conjugateEvolutionPathL2Norm / sqrt(1. - pow(1.-_sigmaCumulationFactor, 2.0*(1.0+_currentGeneration))) / _chiSquareNumber);
 
  /* cumulation for covariance matrix (pc) using B*D*z~N(0,C) */
  for (size_t d = 0; d < N; ++d)
@@ -617,8 +623,8 @@ void korali::solver::optimizer::CMAES::updateSigma()
  /* standard update */
  else
  {
-   // _sigma *= exp(min(1.0, _sigmaCumulationFactor/_dampFactor*((sqrt(_conjugateEvolutionPathL2Norm)/_chiSquareNumber)-1.))); (alternative)
-   _sigma *= exp(_sigmaCumulationFactor/_dampFactor*(sqrt(_conjugateEvolutionPathL2Norm)/_chiSquareNumber-1.));
+   // _sigma *= exp(min(1.0, _sigmaCumulationFactor/_dampFactor*((_conjugateEvolutionPathL2Norm/_chiSquareNumber)-1.))); (alternative)
+   _sigma *= exp(_sigmaCumulationFactor/_dampFactor*(_conjugateEvolutionPathL2Norm/_chiSquareNumber-1.));
  }
 
  /* escape flat evaluation */
@@ -825,13 +831,13 @@ void korali::solver::optimizer::CMAES::eigen(size_t size, std::vector<double>& M
 }
 
 
-void korali::solver::optimizer::CMAES::sort_index(const std::vector<double>& vec, std::vector<size_t>& _sortingIndex, size_t n) const
+void korali::solver::optimizer::CMAES::sort_index(const std::vector<double>& vec, std::vector<size_t>& sortingIndex, size_t n) const
 {
-  // initialize original _sortingIndex locations
-  std::iota(std::begin(_sortingIndex), std::begin(_sortingIndex)+n, (size_t) 0);
+  // initialize original sortingIndex locations
+  std::iota(std::begin(sortingIndex), std::begin(sortingIndex)+n, (size_t) 0);
 
   // sort indexes based on comparing values in vec
-  std::sort(std::begin(_sortingIndex), std::begin(_sortingIndex)+n, [vec](size_t i1, size_t i2) { return vec[i1] > vec[i2]; } );
+  std::sort(std::begin(sortingIndex), std::begin(sortingIndex)+n, [vec](size_t i1, size_t i2) { return vec[i1] > vec[i2]; } );
 
 }
 

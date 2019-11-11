@@ -1,0 +1,333 @@
+{
+ "Configuration Settings":
+ [
+   {
+    "Name": [ "Population Size" ],
+    "Type": "size_t",
+    "Description": "Specifies the number of samples to evaluate per generation (preferably $4+3*log(N)$, where $N$ is the number of variables)."
+   },
+   {
+    "Name": [ "Mu Value" ],
+    "Default": "_populationSize*0.5",
+    "Type": "size_t",
+    "Description": "Number of best samples used to update the covariance matrix and the mean (by default it is half the Sample Count)."
+   },
+   {
+    "Name": [ "Mu Type" ],
+    "Default": "Logarithmic",
+    "Type": "std::string",
+    "Options": [
+                { "Value": "Linear", "Description": "Distributes Mu values linearly." },
+                { "Value": "Equal", "Description": "Distributes Mu values equally." },
+                { "Value": "Logarithmic", "Description": "Distributes Mu values logarithmically." }
+               ],
+    "Description": "Weights given to the Mu best values to update the covariance matrix and the mean."
+   },  
+   {
+    "Name": [ "Initial Sigma" ],
+    "Default": "1.0",
+    "Type": "double",
+    "Description": "Initial scaling factor for sample distribution."
+   }, 
+   {
+    "Name": [ "Sigma Update Rule" ],
+    "Default": "CMAES",
+    "Type": "std::string",
+    "Description": "Rule applied to update Sigma (CMAES, or LMCMA)."
+   },
+   {
+    "Name": [ "Random Number Distribution" ],
+    "Default": "Normal",
+    "Type": "std::string",
+    "Description": "Random Number to mutate, 'Normal', 'Uniform'."
+   }, 
+   {
+    "Name": [ "Symmetric Sampling" ],
+    "Default": "true",
+    "Type": "bool",
+    "Description": "Sample every odd sample reflected in current mean."
+   },
+   {
+    "Name": [ "Sigma Cumulation Factor" ],
+    "Default": "0.3",
+    "Type": "double",
+    "Description": "Controls the learning rate of the conjugate evolution path (must be in (0,1])."
+   },
+   {
+    "Name": [ "Damp Factor" ],
+    "Default": "1.0",
+    "Type": "double",
+    "Description": "Controls the updates of the covariance matrix scaling factor (must be in (0,1])."
+   },
+   {
+    "Name": [ "Is Sigma Bounded" ],
+    "Default": "false",
+    "Type": "bool",
+    "Description": "Sets an upper bound for the covariance matrix scaling factor. The upper bound is given by the average of the initial standard deviation of the variables."
+   },
+   {
+    "Name": [ "Cumulative Covariance" ],
+    "Default": "0.5/std::sqrt(_k->_variables.size())",
+    "Type": "double",
+    "Description": "Controls the learning rate of the evolution path for the covariance update (must be in (0,1])."
+   },  
+   {
+    "Name": [ "Cholesky Matrix Learning Rate" ],
+    "Default": "1.0/(10.0-std::log(_k->_variables.size()+1.0))",
+    "Type": "double",
+    "Description": "Controls the learning rate of the Cholesky factor (must be in (0,1])."
+   }, 
+   {
+    "Name": [ "Target Distance Coefficients" ],
+    "Default": "{ double(_k->_variables.size()), 0.0, 0.0 }",
+    "Type": "std::vector<double>",
+    "Description": "Coefficients that define target distance between consecutive vectors in Evolution Path Matrix. Target distance calculated as a0 + a1 * ( (j+1)/Subset Size)^a2, where j corresponds to the jth oldest Evolution Path. By default target distance equals N."
+   },
+   {
+    "Name": [ "Target Success Rate" ],
+    "Default": "0.25",
+    "Type": "double",
+    "Description": "Target population success rate. Sigma increases if population success rate is larger than target. Success rate estimated from comparison of previous and current function values."
+   },
+   {
+    "Name": [ "Set Update Interval" ],
+    "Default": "std::max(std::floor(std::log(_k->_variables.size())), 1.0)",
+    "Type": "size_t",
+    "Description": "Intervals at which the Evolution Path Matrix and the Inverse Vectors are being updated."   
+   },
+   {
+    "Name": [ "Subset Size" ],
+    "Default": "std::ceil(std::sqrt(double(_k->_variables.size())))",
+    "Type": "size_t",
+    "Description": "Number of vectors used to reconstruct the Cholesky factor (old version uses 4+3log(N)). Larger Subset Size increases internal cost but usually improves performance."
+   }
+ ],
+
+ "Termination Criteria":
+ [
+   {
+    "Name": ["Max Generations" ],
+    "Type": "size_t",
+    "Default": "100",
+    "Criteria": "_currentGeneration > _maxGenerations",
+    "Description": "Determines how many solver generations to run before stopping execution. Execution can be resumed at a later moment."
+   },
+   {
+    "Name": [ "Min Value" ],
+    "Type": "double",
+    "Default": "-INFINITY",
+    "Criteria": "-_bestEverValue < _minValue",
+    "Description": "Specifies the minimum target fitness to stop minimization."
+   },
+   {
+    "Name": [ "Max Value" ],
+    "Type": "double",
+    "Default": "+INFINITY",
+    "Criteria": "+_bestEverValue > _maxValue",
+    "Description": "Specifies the maximum target fitness to stop maximization."
+   },
+   {
+    "Name": [ "Min Value Difference Threshold" ],
+    "Type": "double",
+    "Default": "-INFINITY",
+    "Criteria": "_currentGeneration > 1 && (fabs(_currentBestValue - _previousBestValue) <= _minValueDifferenceThreshold)",
+    "Description": "Specifies the minimum fitness differential between two consecutive generations before stopping execution."
+   }
+ ],
+
+ "Variables Configuration":
+ [
+   {
+    "Name": [ "Initial Mean" ],
+    "Type": "double",
+    "Default": "-INFINITY",
+    "Description": "Defines the initial mean for the proposal distribution. This value must be defined between the variable's Mininum and Maximum settings (by default, this value is given by the center of the variable domain)."
+   },
+   {
+    "Name": [ "Initial Standard Deviation" ],
+    "Type": "double",
+    "Default": "-INFINITY",
+    "Description": "Defines the initial standard deviation of the proposal distribution for a variable (by default, this value is given by 30% of the variable domain width)."
+   },
+   {
+    "Name": [ "Minimum Standard Deviation Update" ],
+    "Type": "double",
+    "Default": "0.0",
+    "Description": "Defines a lower bound for the standard deviation updates of the proposal distribution for a variable. Korali increases the scaling factor $\\sigma$ if this value is undershot."
+   }
+ ],
+
+ "Internal Settings":
+ [
+   {
+    "Name": [ "Value Vector" ],
+    "Type": "std::vector<double>",
+    "Description": "Objective function values."
+   },
+   {
+    "Name": [ "Previous Value Vector" ],
+    "Type": "std::vector<double>",
+    "Description": "Objective function values from previous generation."
+   },
+   {
+    "Name": [ "Mu Weights" ],
+    "Type": "std::vector<double>",
+    "Description": "Weights for each of the Mu samples."
+   },
+   {
+    "Name": [ "Effective Mu" ],
+    "Type": "double",
+    "Description": "Variance effective selection mass."
+   },
+   {
+    "Name": [ "Sigma Exponent Factor" ],
+    "Type": "double",
+    "Description": "Controls step size increment."
+   },
+   {
+    "Name": [ "Sigma" ],
+    "Type": "double",
+    "Description": "Determines the step size. Initialized by the larger value of either Initial Sigma or 30% of the domain size (averaged over all dimensions)."
+   },
+   {
+    "Name": [ "Sample Population" ],
+    "Type": "std::vector<std::vector<double>>",
+    "Description": "Sample coordinate information."
+   },
+   {
+    "Name": [ "Finished Sample Count" ],
+    "Type": "size_t",
+    "Description": "Counter of evaluated samples to terminate evaluation."
+   },
+   {
+    "Name": [ "Current Best Value" ],
+    "Type": "double",
+    "Description": "Best model evaluation from current generation."
+   },
+   {
+    "Name": [ "Current Best Variables" ],
+    "Type": "std::vector<double>",
+    "Description": "Best variables of current generation."
+   },
+   {
+    "Name": [ "Best Ever Variables" ],
+    "Type": "std::vector<double>",
+    "Description": "Best ever found variables."
+   },
+   {
+    "Name": [ "Previous Best Value" ],
+    "Type": "double",
+    "Description": "Best model evaluation from previous generation."
+   },
+   {
+    "Name": [ "Best Sample Index" ],
+    "Type": "size_t",
+    "Description": "Index of the best sample in current generation."
+   },
+   {
+    "Name": [ "Best Ever Value" ],
+    "Type": "double",
+    "Description": "Best ever model evaluation."
+   },
+   {
+    "Name": [ "Previous Best Ever Value" ],
+    "Type": "double",
+    "Description": "Best ever model evaluation as of previous generation."
+   }, 
+   {
+    "Name": [ "Previous Sorting Index" ],
+    "Type": "std::vector<size_t>",
+    "Description": "Sorted indeces of samples of previous generation according to their model evaluation."
+   },
+   {
+    "Name": [ "Sorting Index" ],
+    "Type": "std::vector<size_t>",
+    "Description": "Sorted indeces of samples according to their model evaluation."
+   },
+   {
+    "Name": [ "Random Vector" ],
+    "Type": "std::vector<double>",
+    "Description": "Vector storing random numbers for sample generation."
+   }, 
+   {
+    "Name": [ "Replacement Index" ],
+    "Type": "size_t",
+    "Description": "Current column to replace in Evolution Path History and Inverse Vectors."
+   }, 
+   {
+    "Name": [ "Subset History" ],
+    "Type": "std::vector<size_t>",
+    "Description": "Historical column updates of Evolution Paths."
+   }, 
+   {
+    "Name": [ "Subset Update Times" ],
+    "Type": "std::vector<double>",
+    "Description": "Stores timestamps of updated Evolution Paths."
+   },  
+   {
+    "Name": [ "Cholesky Factor Vector Product" ],
+    "Type": "std::vector<double>",
+    "Description": "Placeholder for Cholesky Factor product with Random Vector."
+   }, 
+   {
+    "Name": [ "Evolution Path History" ],
+    "Type": "std::vector<std::vector<double>>",
+    "Description": "Vectors storing some of previous evolution paths."
+   }, 
+   {
+    "Name": [ "Inverse Vectors" ],
+    "Type": "std::vector<std::vector<double>>",
+    "Description": "Matrix storing the inverse vectors."
+   },
+   {
+    "Name": [ "Current Mean" ],
+    "Type": "std::vector<double>",
+    "Description": "Current mean of proposal distribution."
+   },
+   {
+    "Name": [ "Previous Mean" ],
+    "Type": "std::vector<double>",
+    "Description": "Previous mean of proposal distribution."
+   },
+   {
+    "Name": [ "Mean Update" ],
+    "Type": "std::vector<double>",
+    "Description": "Update differential from previous to current mean."
+   },
+   {
+    "Name": [ "Evolution Path" ],
+    "Type": "std::vector<double>",
+    "Description": "Evolution path for Covariance Matrix update."
+   }, 
+   {
+    "Name": [ "Evolution Path Weights" ],
+    "Type": "std::vector<double>",
+    "Description": "Weights for the calculation of the Cholesky Factor."
+   }, 
+   {
+    "Name": [ "Conjugate Evolution Path L2 Norm" ],
+    "Type": "double",
+    "Description": "L2 Norm of the conjugate evolution path."
+   },
+   {
+    "Name": [ "Infeasible Sample Count" ],
+    "Type": "size_t",
+    "Description": "Keeps count of the number of infeasible samples."
+   },
+   {
+    "Name": [ "Sqrt Inverse Cholesky Rate" ],
+    "Type": "double",
+    "Description": "Shared variable to speed up computation."
+   }, 
+   {
+    "Name": [ "Chi Square Number" ],
+    "Type": "double",
+    "Description": "Expectation of $||N(0,I)||^2$."
+   },
+   {
+    "Name": [ "Standard Deviation" ],
+    "Type": "std::vector<double>",
+    "Description": "Scaling factors for samples (read from Initial Standard Deviation or calculated as 30% of the domain widths)."
+   }
+ ]
+}

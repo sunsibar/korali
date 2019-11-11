@@ -1,0 +1,48 @@
+#ifndef _KORALI_SOLVER_LMCMAES_HPP_
+#define _KORALI_SOLVER_LMCMAES_HPP_
+
+#include "solver/optimizer/optimizer.hpp"
+#include "distribution/univariate/normal/normal.hpp"
+#include "distribution/univariate/uniform/uniform.hpp"
+#include "problem/evaluation/direct/direct.hpp"
+#include <vector>
+
+namespace korali { namespace solver { namespace optimizer {
+
+class LMCMAES : public korali::solver::Optimizer
+{
+ private:
+
+ korali::distribution::univariate::Normal* _normalGenerator; /* Normal random number generator */
+ korali::distribution::univariate::Uniform* _uniformGenerator; /* Uniform random number generator */
+
+ korali::problem::evaluation::Direct* _directProblem;
+ korali::problem::Evaluation* _evaluationProblem;
+
+ void prepareGeneration();
+ void initMuWeights(size_t numsamplesmu);
+ void initCovariance();
+ void sampleSingle(size_t sampleIdx);
+ void choleskyFactorUpdate(size_t sampleIdx);
+ void updateSet();
+ void updateInverseVectors();
+ void updateDistribution();
+ void updateSigma();
+ void numericalErrorTreatment();
+
+ void sort_index(const std::vector<double>& vec, std::vector<size_t>& _sortingIndex, size_t n) const;
+ // Private LMCMAES-Specific Methods
+ // .. 
+
+ public:
+
+ void initialize() override;
+ void finalize() override;
+ void runGeneration() override;
+ void printGenerationBefore() override;
+ void printGenerationAfter() override;
+};
+
+} } } // namespace korali::solver::optimizer
+
+#endif // _KORALI_SOLVER_LMCMAES_HPP_

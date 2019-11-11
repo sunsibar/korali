@@ -125,8 +125,6 @@ void korali::conduit::MPI::workerThread()
 
 void korali::conduit::MPI::processSample(korali::Sample& sample)
 {
- _modelEvaluationCount++;
-
  #ifdef _KORALI_USE_MPI
  while (_teamQueue.empty())
  {

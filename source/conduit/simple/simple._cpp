@@ -6,8 +6,6 @@
 
 void korali::conduit::Simple::processSample(korali::Sample& sample)
 {
- _modelEvaluationCount++;
-
  auto js = nlohmann::json();
  js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count();
 

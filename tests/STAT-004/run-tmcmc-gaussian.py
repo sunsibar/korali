@@ -35,7 +35,7 @@ k["Variables"][0]["Prior Distribution"] = "Uniform 0"
 
 # Running Korali
 k.run()
-k["Random Seed"] = 1234
+k["Random Seed"] = 5467
 
 verifyMean(k, [-2.0], 0.05)
 verifyStd(k, [3.0], 0.05)

@@ -78,14 +78,14 @@
     "Name": [ "Min Value" ],
     "Type": "double",
     "Default": "-INFINITY",
-    "Criteria": "(_currentGeneration > 1) && (_bestEverValue < _minValue)",
+    "Criteria": "(_currentGeneration > 1) && (-_bestEverValue < _minValue)",
     "Description": "Specifies the target fitness to stop minimization."
    },
    {
     "Name": [ "Max Value" ],
     "Type": "double",
     "Default": "+INFINITY",
-    "Criteria": "(_currentGeneration > 1) && (_bestEverValue > _maxValue)",
+    "Criteria": "(_currentGeneration > 1) && (+_bestEverValue > _maxValue)",
     "Description": "Specifies the target fitness to stop maximization."
    },
    {

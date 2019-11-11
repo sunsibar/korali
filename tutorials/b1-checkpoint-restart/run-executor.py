@@ -30,7 +30,7 @@ k["Variables"][1]["Loaded Values"] = variances
 
 k["Solver"]["Type"] = "Executor"
 k["Solver"]["Executions Per Generation"] = 1
-k["Solver"]["Termination Criteria"]["Max Executions"] = 2
+k["Solver"]["Termination Criteria"]["Max Model Evaluations"] = 2
 
 k["Console Output"]["Verbosity"] = "Detailed"
 k["Results Output"]["Path"] = resultDir
@@ -43,6 +43,5 @@ print("-------------------------------------------------------------\n")
 
 resultFile = korali.getLatestResult(resultDir)
 k.loadState(resultFile)
-k["Solver"]["Termination Criteria"]["Max Executions"] = len(means)
 k.run()
 

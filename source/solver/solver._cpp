@@ -18,6 +18,7 @@ void korali::Solver::solverWrapper()
 
   while(solver->checkTermination() == false)
   {
+   if (engine->_consoleOutputFrequency > 0)
    if (solver->_currentGeneration % engine->_consoleOutputFrequency == 0)
    {
     korali::logInfo("Minimal",  "--------------------------------------------------------------------\n");
@@ -33,12 +34,14 @@ void korali::Solver::solverWrapper()
    // Timing and Profiling End
    auto t1 = std::chrono::system_clock::now();
 
+   if (engine->_consoleOutputFrequency > 0)
    if (solver->_currentGeneration % engine->_consoleOutputFrequency == 0)
    {
     solver->printGenerationAfter();
     korali::logInfo("Detailed", "Solver: %lu - Generation Time: %.3fs\n", solver->_solverId, std::chrono::duration<double>(t1-t0).count());
    }
 
+   if (engine->_resultsOutputFrequency > 0)
    if (solver->_currentGeneration % engine->_resultsOutputFrequency == 0) engine->saveState(solver, solver->_subDirPath, solver->_currentGeneration);
 
    solver->_currentGeneration++;
@@ -61,7 +64,7 @@ void korali::Solver::solverWrapper()
   korali::logInfo("Normal", "Results saved to folder: '%s'\n", solver->_subDirPath.c_str());
 
   // Saving last generation and final.json
-  engine->saveState(solver, solver->_subDirPath, solver->_currentGeneration);
+  if (engine->_resultsOutputFrequency > 0) engine->saveState(solver, solver->_subDirPath, solver->_currentGeneration);
   engine->saveState(solver, solver->_subDirPath, "final.json");
 
   co_switch(engine->_thread);

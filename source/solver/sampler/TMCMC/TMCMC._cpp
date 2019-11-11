@@ -95,21 +95,21 @@ void korali::solver::sampler::TMCMC::runGeneration()
 
   std::vector<korali::Sample> samples(_chainCount);
 
-  while (_finishedChainsCount < _chainCount){
-    for (size_t c = 0; c < _chainCount; c++){
-
-      if( _currentChainStep[c] < _chainLengths[c] + _currentBurnIn )
-
-      if( _chainPendingEvaluation[c] == false ){
-        _chainPendingEvaluation[c] = true;
-        samples[c]["Operation"]  = "Basic Evaluation";
-        samples[c]["Parameters"] = _chainCandidates[c];
-        samples[c]["Sample Id"]  = c;
-        _k->_conduit->start(samples[c]);
+  while (_finishedChainsCount < _chainCount)
+  {
+    for (size_t c = 0; c < _chainCount; c++)
+    {
+     if (_currentChainStep[c] < _chainLengths[c] + _currentBurnIn)
+     if (_chainPendingEvaluation[c] == false)
+     {
+       _chainPendingEvaluation[c] = true;
+       samples[c]["Operation"] = "Basic Evaluation";
+       samples[c]["Parameters"] = _chainCandidates[c];
+       samples[c]["Sample Id"] = c;
+       _k->_conduit->start(samples[c]);
+       _modelEvaluationCount++;
       }
-
     }
-
     size_t finishedId = _k->_conduit->waitAny(samples);
 
     _chainPendingEvaluation[finishedId] = false;

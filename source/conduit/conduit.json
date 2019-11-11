@@ -6,25 +6,7 @@
     "Type": "size_t",
     "Default": "0",
     "Description": "Indicates the identifier for the next issued sample."
-   },
-   {
-    "Name": [ "Model Evaluation Count" ],
-    "Type": "size_t",
-    "Default": "0",
-    "Description": "Keeps track of how many model evaluations has the conduit performed so far."
-   }
- ],
-   
- "Termination Criteria":
- [
-   {
-    "Name": [ "Max Model Evaluations" ],
-    "Type": "size_t",
-    "Default": "10000000",
-    "Criteria": "_modelEvaluationCount > _maxModelEvaluations",
-    "Description": "Determines how many computational model evaluations to run before stopping execution. Execution can be resumed at a later moment."
    }
  ]
-   
 }
 

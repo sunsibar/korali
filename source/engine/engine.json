@@ -58,6 +58,12 @@
     "Description": "Specifies how often (in generations) will partial results be printed on console. The default, 1, indicates that every generation's results will be printed."
    },
    {
+    "Name": ["Results Output", "Active" ],
+    "Type": "bool",
+    "Default": "true",
+    "Description": "Switch to turn on/off result output."
+   },
+   {
     "Name": ["Results Output", "Frequency" ],
     "Type": "size_t",
     "Default": "1",

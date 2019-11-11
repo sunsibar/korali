@@ -49,7 +49,7 @@ def plot(src, plotAll=False, live=False, generation=None, test=False, plot_mean=
                     appendStates(state, (fval, best, sigma, psL2), stateNames)
                     appendStateVectors(state, (fvalXvec, mu, axis), vecStateNames)
 
-                    numeval.append(data['Conduit']['Internal']['Model Evaluation Count'])
+                    numeval.append(data['Solver']['Internal']['Model Evaluation Count'])
                     cond.append(state['Maximum Covariance Eigenvalue']/state['Minimum Covariance Eigenvalue'])
                     dfval.append(abs(state['Current Best Value'] - state['Best Ever Value']))
 

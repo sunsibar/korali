@@ -33,6 +33,7 @@ void korali::solver::sampler::MCMC::runGeneration()
   if (_problem->isSampleFeasible(sample))
   {
    _k->_conduit->start(sample);
+   _modelEvaluationCount++;
    _k->_conduit->wait(sample);
    evaluation = sample["Evaluation"];
   }
@@ -209,7 +210,6 @@ void korali::solver::sampler::MCMC::generateCandidate(size_t sampleIdx)
  _proposedSampleCount++;
 
  if (sampleIdx == 0) for (size_t d = 0; d < N; ++d) _chainCandidate[sampleIdx][d] = _chainLeader[d];
->>>>>>> development
  else for (size_t d = 0; d < N; ++d) _chainCandidate[sampleIdx][d] = _chainCandidate[sampleIdx-1][d];
 
  if ( (_useAdaptiveSampling == false) || (_databaseEntryCount <= _nonAdaptionPeriod + _burnIn))

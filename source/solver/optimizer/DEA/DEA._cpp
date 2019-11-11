@@ -94,6 +94,7 @@ void korali::solver::optimizer::DEA::runGeneration()
   samples[i]["Operation"] = "Basic Evaluation";
   samples[i]["Parameters"] = _candidatePopulation[i];
   samples[i]["Sample Id"] = i;
+  _modelEvaluationCount++;
   _k->_conduit->start(samples[i]);
  }
 

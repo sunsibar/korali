@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
  k["Problem"]["Reference Data"] = p.refTemp;
  k["Problem"]["Computational Model"] = &heat2DSolver;
 
- k["Solver"]["Type"] = "Optimizer/CMAES";
+ k["Solver"]["Type"] = "Optimizer/LMCMAES";
  k["Solver"]["Population Size"] = 32;
  k["Solver"]["Termination Criteria"]["Max Generations"] = 100;
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
  k["Variables"][1]["Name"] = "PosX";
  k["Variables"][1]["Bayesian Type"] = "Computational";
- k["Variables"][1]["Prior Distribution"] = "Uniform 1";
+ k["Variables"][1]["Prior Distribution"] = "Uniform 1"; 
  k["Variables"][1]["Initial Mean"] = 0.25;
  k["Variables"][1]["Initial Standard Deviation"] = 0.01;
 
