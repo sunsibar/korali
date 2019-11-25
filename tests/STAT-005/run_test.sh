@@ -4,6 +4,8 @@ source ../functions.sh
 
 logEcho "[Korali] Beginning Stat Test 005"
 
+rm -rf _korali_result* >> $logFile 2>&1
+
 for file in run-*.py
 do
   logEcho "-------------------------------------"
