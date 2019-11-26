@@ -31,7 +31,6 @@ void korali::Engine::run()
   if (_experimentVector.size() == 1) _experimentVector[i]->_logFile = stdout;
 
   _currentExperiment = _experimentVector[i];
-  if (_experimentVector.size() > 1) korali::logInfo("Minimal", "Starting Experiment %lu...\n", i);
   _experimentVector[i]->initialize();
  }
 
@@ -68,6 +67,8 @@ void korali::Engine::run()
   // Setting base time for profiling.
   _startTime = std::chrono::high_resolution_clock::now();
   _profilingLastSave = std::chrono::high_resolution_clock::now();
+
+  if (_experimentVector.size() > 1) for (size_t i = 0; i < _experimentVector.size(); i++) korali::logInfo("Minimal", "Starting Experiment %lu...\n", i);
 
   while(true)
   {
