@@ -7,12 +7,12 @@
 void korali::conduit::Sequential::processSample(korali::Sample& sample)
 {
  auto js = nlohmann::json();
- js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
 
  size_t experimentId = sample["Experiment Id"];
  _experimentVector[experimentId]->_problem->runOperation(sample["Operation"], sample);
 
- js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
  js["Current Generation"] = _currentExperiment->_currentGeneration;
  js["Solver Id"] = _currentExperiment->_experimentId;
  __profiler["Timelines"]["Worker 0"] += js;

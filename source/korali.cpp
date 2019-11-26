@@ -15,7 +15,7 @@ void korali::Engine::run()
 
  if (! korali::JsonInterface::isDefined(_js.getJson(), "['Profiling']['Detail']")) _js["Profiling"]["Detail"] = "None";
  if (! korali::JsonInterface::isDefined(_js.getJson(), "['Profiling']['Path']")) _js["Profiling"]["Path"] = "./profiling.json";
- if (! korali::JsonInterface::isDefined(_js.getJson(), "['Profiling']['Frequency']")) _js["Profiling"]["Frequency"] = korali::Inf;
+ if (! korali::JsonInterface::isDefined(_js.getJson(), "['Profiling']['Frequency']")) _js["Profiling"]["Frequency"] = 60.0;
  if (! korali::JsonInterface::isDefined(_js.getJson(), "['Conduit']['Type']")) _js["Conduit"]["Type"] = "Sequential";
  if (! korali::JsonInterface::isDefined(_js.getJson(), "['Dry Run']")) _js["Dry Run"] = false;
 
@@ -37,7 +37,7 @@ void korali::Engine::run()
 
  if (_isFirstRun == true)
  {
-  _elapsedTime = 0.0;
+  _cumulativeTime = 0.0;
   _conduit = dynamic_cast<korali::Conduit*>(korali::Module::getModule(_js["Conduit"]));
   _isFirstRun = false;
  }
@@ -94,6 +94,7 @@ void korali::Engine::run()
   if (_experimentVector.size() > 1) korali::logInfo("Normal", "Elapsed Time: %.3fs\n", std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count());
 
   saveProfilingInfo(true);
+  _cumulativeTime += std::chrono::duration<double>(_endTime-_startTime).count();
  }
 
  _conduit->finalize();
@@ -107,9 +108,9 @@ void korali::Engine::saveProfilingInfo(bool forceSave)
   double timeSinceLast = std::chrono::duration<double>(currTime-_profilingLastSave).count();
   if ((timeSinceLast > _profilingFrequency) || forceSave)
   {
+    double elapsedTime = std::chrono::duration<double>(currTime-_startTime).count();
     __profiler["Experiment Count"] = _experimentVector.size();
-    _elapsedTime += std::chrono::duration<double>(currTime-_startTime).count();
-    __profiler["Elapsed Time"] = _elapsedTime;
+    __profiler["Elapsed Time"] = elapsedTime + _cumulativeTime;
     korali::JsonInterface::saveJsonToFile(_profilingPath.c_str(), __profiler);
     _profilingLastSave = std::chrono::high_resolution_clock::now();
   }

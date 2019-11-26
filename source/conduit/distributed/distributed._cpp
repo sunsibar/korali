@@ -154,7 +154,7 @@ void korali::conduit::Distributed::processSample(korali::Sample& sample)
  MPI_Irecv(&resultJsonSize, 1, MPI_UNSIGNED_LONG, _teamWorkers[teamId][0], MPI_TAG_SAMPLE_JSON_SIZE, MPI_COMM_WORLD, &resultJsonRequest);
 
  auto js = nlohmann::json();
- js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
 
  int flag = 0;
  while(flag == 0)
@@ -175,7 +175,7 @@ void korali::conduit::Distributed::processSample(korali::Sample& sample)
   }
  }
 
- js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
  js["Solver Id"] = _currentExperiment->_experimentId;
  js["Current Generation"] = _currentExperiment->_currentGeneration;
  __profiler["Timelines"]["Worker " + std::to_string(teamId)] += js;

@@ -99,7 +99,7 @@ void korali::conduit::Concurrent::processSample(korali::Sample& sample)
  int launcherId = _launcherQueue.front(); _launcherQueue.pop();
 
  auto js = nlohmann::json();
- js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["Start Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
 
  std::string inputString = sample._js.getJson().dump();
  size_t inputStringSize = inputString.size();
@@ -130,7 +130,7 @@ void korali::conduit::Concurrent::processSample(korali::Sample& sample)
   }
  }
 
- js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _elapsedTime;
+ js["End Time"] = std::chrono::duration<double>(std::chrono::high_resolution_clock::now()-_startTime).count() + _cumulativeTime;
  js["Solver Id"] = _currentExperiment->_experimentId;
  js["Current Generation"] = _currentExperiment->_currentGeneration;
  __profiler["Timelines"]["Worker " + std::to_string(launcherId)] += js;

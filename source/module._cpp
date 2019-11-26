@@ -3,7 +3,7 @@
 nlohmann::json korali::__profiler;
 std::chrono::time_point<std::chrono::high_resolution_clock> korali::_startTime;
 std::chrono::time_point<std::chrono::high_resolution_clock> korali::_endTime;
-double korali::_elapsedTime;
+double korali::_cumulativeTime;
 
 // Module Include List
 

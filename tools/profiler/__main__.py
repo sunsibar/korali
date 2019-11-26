@@ -141,48 +141,6 @@ axs[1].plot(xdim, averageEfficiency, '--')
 axs[1].legend(effLabels + [ 'Average' ])
 axs[1].set_ylabel('Worker Efficiency')  
  
-######################## Creating Generation-based figure
-
-if (experimentCount == 1):
- maxGeneration = 0
- for segment in timelines[0]:
-  if (segment["Current Generation"] > maxGeneration): maxGeneration = segment["Current Generation"]
- 
- genMaxTimes = []
- genTotalTimes = []
- genAvgTimes = []
- genTimeCounts = []
- genBalanceRatios = []
-
- for i in range(maxGeneration):
-  genMaxTimes.append(0)
-  genTotalTimes.append(0)
-  genTimeCounts.append(0)
-  genAvgTimes.append(0)
-  genBalanceRatios.append(0)
- 
- for t in timelines:
-  for segment in t:
-   currentTime = segment["End Time"] - segment["Start Time"]
-   currGen = segment["Current Generation"] - 1
-   genTotalTimes[currGen] += currentTime
-   if (currentTime > genMaxTimes[currGen]): genMaxTimes[currGen] = currentTime
-   genTimeCounts[currGen] = genTimeCounts[currGen] + 1 
-
- for i in range(maxGeneration):
-  genAvgTimes[i] = genTotalTimes[i] / genTimeCounts[i]
-  genBalanceRatios[i] = 1 + (genMaxTimes[i] - genAvgTimes[i]) / genAvgTimes[i]
-
- xdim = np.arange(1, maxGeneration+1, 1.0)
- figGen, genaxs = pyplot.subplots(1, 1, figsize=(25, 5))
- genaxs.set_xticks(xdim)
- genaxs.set_ylim(0, max(genAvgTimes))
- genaxs.set_xlim(1, maxGeneration)
- genaxs.plot(xdim, genAvgTimes)
- 
- genaxs.set_ylabel('Average Time Per Sample (s)')
- genaxs.set_xlabel('Generation #')  
- 
- ####################### Creating Plots
+####################### Creating Plots
 
 pyplot.show() 

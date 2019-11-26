@@ -32,7 +32,7 @@ class Module
 extern nlohmann::json __profiler;
 extern std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
 extern std::chrono::time_point<std::chrono::high_resolution_clock> _endTime;
-extern double _elapsedTime;
+extern double _cumulativeTime;
 
 } // namespace korali
 
