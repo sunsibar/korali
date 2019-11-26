@@ -6,6 +6,8 @@ logEcho "[Korali] Beginning Stat Test 005"
 
 rm -rf _korali_result* >> $logFile 2>&1
 
+python3 -m pip install --user scipy
+
 for file in run-*.py
 do
   logEcho "-------------------------------------"
