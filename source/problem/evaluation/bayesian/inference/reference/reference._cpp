@@ -23,7 +23,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::evaluateLogLik
   if (_likelihoodModel == "Multiplicative Normal Data") loglikelihoodNormalMultiplicativeData(sample);
 }
 
-double korali::problem::evaluation::bayesian::inference::Reference::compute_sse( std::vector<double> x, std::vector<double> y ){
+double korali::problem::evaluation::bayesian::inference::Reference::computeSSE( std::vector<double> x, std::vector<double> y ){
   double sse = 0.;
   for(size_t i = 0; i < y.size(); i++)
   {
@@ -44,7 +44,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodN
   double sigma   = sample["Parameters"][_statisticalVariableIndices[0]];
   double sigma2  = sigma*sigma;
 
-  double sse = compute_sse( sample["Reference Evaluations"], _referenceData );
+  double sse = computeSSE( sample["Reference Evaluations"], _referenceData );
 
   if( isinf(sse) )
     sample["logLikelihood"] = -korali::Inf;
@@ -56,7 +56,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodN
 {
   double sigma2 = sample["Parameters"][_statisticalVariableIndices[0]];
 
-  double sse = compute_sse( sample["Reference Evaluations"], _referenceData );
+  double sse = computeSSE( sample["Reference Evaluations"], _referenceData );
 
   if( isinf(sse) )
     sample["logLikelihood"] = -korali::Inf;
