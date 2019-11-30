@@ -158,7 +158,7 @@ static bool isDefined(nlohmann::json& js, std::string path)
 static bool loadJsonFromFile(nlohmann::json& dst, const char* fileName)
 {
  FILE *fid = fopen(fileName, "r");
- if (fid != NULL)
+ if (fid != nullptr)
  {
    fseek(fid, 0, SEEK_END);
    long fsize = ftell(fid);
@@ -183,7 +183,7 @@ static bool loadJsonFromFile(nlohmann::json& dst, const char* fileName)
 static void saveJsonToFile(const char* fileName, nlohmann::json& js)
 {
  FILE *fid = fopen(fileName, "w");
- if (fid != NULL)
+ if (fid != nullptr)
  {
    fprintf(fid, "%s", js.dump(1).c_str());
    fclose(fid);

@@ -30,10 +30,10 @@ void korali::solver::optimizer::LMCMAES::initialize()
  _uniformGenerator->initialize();
 
  _directProblem       = dynamic_cast<korali::problem::evaluation::Direct*>(_k->_problem);
- bool isDirectProblem = _directProblem != NULL;
+ bool isDirectProblem = _directProblem != nullptr;
 
  _evaluationProblem       = dynamic_cast<korali::problem::Evaluation*>(_k->_problem);
- bool isEvaluationProblem = _evaluationProblem != NULL;
+ bool isEvaluationProblem = _evaluationProblem != nullptr;
 
  if (isEvaluationProblem == false)
   korali::logError("LMCMAES can only optimize problems of type 'Evaluation' or derived.\n");

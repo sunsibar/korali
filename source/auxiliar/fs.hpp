@@ -11,7 +11,7 @@ namespace korali
  static void mkdir(const std::string dirPath)
  {
          char tmp[256];
-         char *p = NULL;
+         char *p = nullptr;
          size_t len;
 
          snprintf(tmp, sizeof(tmp),"%s",dirPath.c_str());

@@ -6,7 +6,7 @@ void korali::solver::Executor::initialize()
  // Initializing variable defaults
  _executionProblem = dynamic_cast<korali::problem::Execution*>(_k->_problem);
 
- if (_executionProblem == NULL)
+ if (_executionProblem == nullptr)
    korali::logError("Executor solver can only solve problems of type 'Execution'.\n");
 
  _sampleCount   = _k->_variables[0]->_loadedValues.size();

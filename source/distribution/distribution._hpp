@@ -27,7 +27,7 @@ class Distribution : public korali::Module
  void finalize() override;
  virtual void updateDistribution() { };
  virtual void updateProperty(std::string property, double value) { };
- virtual double* getPropertyPointer(std::string property) { return NULL; };
+ virtual double* getPropertyPointer(std::string property) { return nullptr; };
 
 };
 

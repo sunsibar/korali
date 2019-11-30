@@ -39,7 +39,7 @@ void korali::solver::optimizer::DEA::initialize()
     korali::logError("Lower Bound (%.4f) of variable \'%s\'  exceeds Upper Bound (%.4f).\n", _k->_variables[d]->_lowerBound, _k->_variables[d]->_name.c_str(), _k->_variables[d]->_upperBound);
 
      _evaluationProblem = dynamic_cast<korali::problem::Evaluation*>(_k->_problem);
-     bool isEvaluationProblem = _evaluationProblem != NULL;
+     bool isEvaluationProblem = _evaluationProblem != nullptr;
 
      if (isEvaluationProblem == false)
       korali::logError("DEA can only optimize problems of type 'Evaluation' or derived.\n");

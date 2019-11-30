@@ -297,7 +297,7 @@ def createGetPropertyPointer(module):
    codeString += ' if (property == "' + v["Name"][0] + '") return &' + getCXXVariableName(v["Name"]) + ';\n'
 
   codeString += ' korali::logError("Property %s not recognized for distribution ' + module["Class"] + '.\\n", property.c_str());\n'
-  codeString += ' return NULL;\n'
+  codeString += ' return nullptr;\n'
   codeString += '}\n\n'
 
   return codeString

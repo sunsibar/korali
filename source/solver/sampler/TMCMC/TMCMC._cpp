@@ -313,7 +313,7 @@ void korali::solver::sampler::TMCMC::minSearch(double const *loglike, size_t Ns,
   const double Step    = 1e-8;  /* Search stepsize */
 
   const gsl_multimin_fminimizer_type *T;
-  gsl_multimin_fminimizer *s = NULL;
+  gsl_multimin_fminimizer *s = nullptr;
   gsl_vector *ss, *x;
   gsl_multimin_function minex_func;
 
