@@ -124,7 +124,7 @@ void korali::solver::sampler::MCMC::initialize()
  _proposedSampleCount = 0;
  _chainLength = 0;
  _databaseEntryCount = 0;
- _chainLeaderEvaluation = -std::numeric_limits<double>::infinity();
+ _chainLeaderEvaluation = -korali::Inf;
  _acceptanceRate  = 1.0;
 }
 

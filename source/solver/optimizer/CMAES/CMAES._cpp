@@ -39,9 +39,9 @@ void korali::solver::optimizer::CMAES::initialize()
   korali::logError("CMAES can only optimize problems of type 'Evaluation' or derived.\n");
 
  if (isDirectProblem == false || _directProblem->_objective == "Maximize") 
-   _bestEverValue = -std::numeric_limits<double>::infinity();
+   _bestEverValue = -korali::Inf;
  else /* Minimize */                           
-   _bestEverValue = +std::numeric_limits<double>::infinity();
+   _bestEverValue = +korali::Inf;
  
  _previousBestEverValue = _bestEverValue;
  _previousBestValue     = _bestEverValue;
@@ -203,8 +203,8 @@ void korali::solver::optimizer::CMAES::initialize()
 
  for (size_t i = 0; i < N; i++) _currentMean[i] = _previousMean[i] = _k->_variables[i]->_initialMean;
 
- _currentMinStandardDeviation = +std::numeric_limits<double>::infinity();
- _currentMaxStandardDeviation = -std::numeric_limits<double>::infinity();
+ _currentMinStandardDeviation = +korali::Inf;
+ _currentMaxStandardDeviation = -korali::Inf;
 
 }
 
@@ -323,8 +323,8 @@ void korali::solver::optimizer::CMAES::checkMeanAndSetRegime()
   _currentPopulationSize = _populationSize;
   _currentMuValue = _muValue;
  
-  if (_directProblem->_objective == "Maximize") _bestEverValue = -std::numeric_limits<double>::infinity();
-  else /* Minimize */                           _bestEverValue = +std::numeric_limits<double>::infinity();
+  if (_directProblem->_objective == "Maximize") _bestEverValue = -korali::Inf;
+  else /* Minimize */                           _bestEverValue = +korali::Inf;
  
   initMuWeights(_currentMuValue);
   initCovariance();
@@ -585,8 +585,8 @@ void korali::solver::optimizer::CMAES::updateDistribution()
  /* numerical error management */
  numericalErrorTreatment();
 
- _currentMinStandardDeviation = std::numeric_limits<double>::infinity();
- _currentMaxStandardDeviation = -std::numeric_limits<double>::infinity();
+ _currentMinStandardDeviation = korali::Inf;
+ _currentMaxStandardDeviation = -korali::Inf;
 
  // Calculating current Minimum and Maximum STD Devs
  for(size_t i = 0; i <N; ++i )

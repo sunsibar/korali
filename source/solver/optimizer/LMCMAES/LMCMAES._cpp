@@ -171,7 +171,7 @@ void korali::solver::optimizer::LMCMAES::initialize()
 
 
  _infeasibleSampleCount   = 0;
- _bestEverValue           = -std::numeric_limits<double>::infinity();
+ _bestEverValue           = -korali::Inf;
  _sqrtInverseCholeskyRate = std::sqrt(1.0-_choleskyMatrixLearningRate);
 
  for (size_t i = 0; i < N; i++) _currentMean[i] = _previousMean[i] = _k->_variables[i]->_initialMean;
@@ -345,7 +345,7 @@ void korali::solver::optimizer::LMCMAES::updateSet()
   else
   {
     double tmparg, minarg, target;
-    minarg = std::numeric_limits<double>::max();
+    minarg = korali::Max;
     for(size_t i = 1; i < _subsetSize; ++i) 
     { 
       /* `target` by default equals  N */
