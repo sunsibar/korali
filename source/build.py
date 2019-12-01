@@ -104,13 +104,13 @@ def consumeValue(base, moduleName, path, varName, varType, varDefault, options):
   cString += ' korali::JsonInterface::eraseValue(' + base + ', "' + path.replace('"', "'") + '");\n\n'
   return cString
 
- if ('std::vector<Subproblem' in varType):
+ if ('std::vector<korali::Subproblem' in varType):
   baseType = varType.replace('std::vector<', '').replace('>','')
   cString += ' ' + varName + '.clear();\n'
-  cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back(new Subproblem);\n'
+  cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back(new Subproblem());\n'
   return cString
 
- if ('std::vector<Subproblem*>' in varType):
+ if ('std::vector<korali::Subproblem*>' in varType):
   baseType = varType.replace('std::vector<', '').replace('>','')
   cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back(new Subproblem());\n'
   cString += ' korali::JsonInterface::eraseValue(' + base + ', "' + path.replace('"', "'") + '");\n\n'
@@ -212,9 +212,9 @@ def createSetConfiguration(module):
    codeString += ' korali::JsonInterface::eraseValue(js, "' + getVariablePath(v).replace('"', "'") + '");\n\n'
  
  if 'Subproblems Configuration' in module:
-  codeString += ' for (size_t i = 0; i < _k->_js["Subproblems Configuration"].size(); i++) { \n'
+  codeString += ' for (size_t i = 0; i < _k->_js["Subproblems"].size(); i++) { \n'
   for v in module["Subproblems Configuration"]:
-   codeString += consumeValue('_k->_js["Subproblems"][i]', module["Name"], getVariablePath(v), '_k->_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v), getVariableDefault(v), getVariableOptions(v))
+   codeString += consumeValue('_k->_js["Subproblems"][i]', module["Name"], getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v), getVariableDefault(v), getVariableOptions(v))
   codeString += ' } \n'
 
  codeString += ' ' + module["Parent Class"] + '::setConfiguration(js);\n'
@@ -250,6 +250,12 @@ def createGetConfiguration(module):
   codeString += ' for (size_t i = 0; i <  _k->_variables.size(); i++) { \n'
   for v in module["Variables Configuration"]:
    codeString += saveValue('_k->_js["Variables"][i]', getVariablePath(v), '_k->_variables[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
+  codeString += ' } \n'
+
+ if 'Subproblems Configuration' in module:
+  codeString += ' for (size_t i = 0; i < _subproblems.size(); i++) { \n'
+  for v in module["Subproblems Configuration"]:
+   codeString += saveValue('_k->_js["Subproblems"][i]', getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
   codeString += ' } \n'
 
  if 'Conditional Variables' in module:
@@ -524,7 +530,7 @@ save_if_different(variableNewHeaderFileName, newBaseString)
 subproblemDeclarationList = '\n'.join(sorted(subproblemDeclarationSet))
 
 subproblemBaseHeaderFileName = koraliDir + '/problem/evaluation/bayesian/hierarchical/subproblem/subproblem._hpp'
-subproblemNewHeaderFileName = koraliDir + '/problem/evaluation/bayesian/hierarchical/subproblem/subproblem.hpp'
+subproblemNewHeaderFileName = koraliDir +  '/problem/evaluation/bayesian/hierarchical/subproblem/subproblem.hpp'
 with open(subproblemBaseHeaderFileName, 'r') as file: subproblemBaseHeaderString = file.read()
 newBaseString = subproblemBaseHeaderString
 newBaseString = newBaseString.replace(' // Subprolem Declaration List', subproblemDeclarationList)

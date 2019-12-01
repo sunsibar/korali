@@ -10,10 +10,15 @@
     "Name": [ "Conditional Priors" ],
     "Type": "std::vector<std::string>",
     "Description": "List of conditional priors to use in the hierarchical problem."
+   },
+   {
+    "Name": [ "Subproblems" ],
+    "Type": "std::vector<korali::Subproblem*>",
+    "Description": "Vector holding Subproblem information."
    }
  ],
 
- "Suproblems Configuration":
+ "Subproblems Configuration":
  [
    {
     "Name": [ "Path" ],
