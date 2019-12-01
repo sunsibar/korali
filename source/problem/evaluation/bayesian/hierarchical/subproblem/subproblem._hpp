@@ -1,0 +1,19 @@
+#ifndef __KORALI_SUBPROBLEM_HPP_
+#define __KORALI_SUBPROBLEM_HPP_
+
+#include <vector>
+
+namespace korali
+{
+
+class Subproblem
+{
+
+ public:
+   // Variable Declaration List
+
+};
+
+}
+
+#endif // __KORALI_SUBPROBLEM_HPP_
