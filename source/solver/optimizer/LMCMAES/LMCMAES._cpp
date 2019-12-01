@@ -13,13 +13,13 @@ void korali::solver::optimizer::LMCMAES::initialize()
  korali::solver::Optimizer::initialize();
 
  // Initializing RNGs
- auto jsNormal = nlohmann::json();
- jsNormal["Name"] = "Normal Generator";
- jsNormal["Type"] = "Univariate/Normal";
- jsNormal["Mean"] = 0.0;
- jsNormal["Standard Deviation"] = 1.0;
- _normalGenerator = dynamic_cast<korali::distribution::univariate::Normal*>(korali::Module::getModule(jsNormal));
- _normalGenerator->initialize();
+ auto jsGaussian = nlohmann::json();
+ jsGaussian["Name"] = "Gaussian Generator";
+ jsGaussian["Type"] = "Univariate/Gaussian";
+ jsGaussian["Mean"] = 0.0;
+ jsGaussian["Standard Deviation"] = 1.0;
+ _gaussianGenerator = dynamic_cast<korali::distribution::univariate::Gaussian*>(korali::Module::getModule(jsGaussian));
+ _gaussianGenerator->initialize();
 
  auto jsUniform = nlohmann::json();
  jsUniform["Name"] = "Uniform Generator";
@@ -141,7 +141,7 @@ void korali::solver::optimizer::LMCMAES::initialize()
  else if (_muType == "Logarithmic")  for (size_t i = 0; i < _muValue; i++) _muWeights[i] = log(std::max( (double)_muValue, 0.5*_populationSize)+0.5)-log(i+1.);
  else  korali::logError("Invalid setting of Mu Type (%s) (Linear, Equal, and Logarithmic accepted).",  _muType.c_str());
 
- if ((_randomNumberDistribution != "Normal") && (_randomNumberDistribution != "Uniform")) korali::logError("Invalid setting of Random Number Distribution (%s) (Normal and Uniform accepted).",  _randomNumberDistribution.c_str());
+ if ((_randomNumberDistribution != "Gaussian") && (_randomNumberDistribution != "Uniform")) korali::logError("Invalid setting of Random Number Distribution (%s) (Gaussian and Uniform accepted).",  _randomNumberDistribution.c_str());
 
  // Normalize weights vector and set mueff
  double s1 = 0.0;
@@ -309,11 +309,11 @@ void korali::solver::optimizer::LMCMAES::choleskyFactorUpdate(size_t sampleIdx)
   /* randomly select subsetStartIndex */
   double ms = 4.0;
   if (sampleIdx == 0) ms *= 10;
-  size_t subsetStartIndex = _subsetSize - std::min( (size_t) std::floor(ms*std::abs(_normalGenerator->getRandomNumber()))+1, _subsetSize);
+  size_t subsetStartIndex = _subsetSize - std::min( (size_t) std::floor(ms*std::abs(_gaussianGenerator->getRandomNumber()))+1, _subsetSize);
 
   //for (size_t d = 0; d < N; ++d) _randomVector[d] = (_uniformGenerator->getRandomNumber() > 0.5) ? 1 : -1.0; Rademacher
-  if ( _randomNumberDistribution == "Normal") 
-      for (size_t d = 0; d < N; ++d) _randomVector[d] = _normalGenerator->getRandomNumber();
+  if ( _randomNumberDistribution == "Gaussian") 
+      for (size_t d = 0; d < N; ++d) _randomVector[d] = _gaussianGenerator->getRandomNumber();
   else if ( _randomNumberDistribution == "Uniform") 
       for (size_t d = 0; d < N; ++d) _randomVector[d] = 2*_uniformGenerator->getRandomNumber()-1.0;
 

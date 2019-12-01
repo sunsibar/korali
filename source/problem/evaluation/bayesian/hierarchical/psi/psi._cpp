@@ -1,5 +1,5 @@
 #include "problem/evaluation/bayesian/hierarchical/psi/psi.hpp"
-#include "distribution/univariate/normal/normal.hpp"
+#include "distribution/univariate/gaussian/gaussian.hpp"
 #include "experiment/experiment.hpp"
 #include "conduit/conduit.hpp"
 

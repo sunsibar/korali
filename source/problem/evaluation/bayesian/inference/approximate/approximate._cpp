@@ -7,17 +7,17 @@ void korali::problem::evaluation::bayesian::inference::Approximate::initialize()
   if (_referenceData.size() == 0)  korali::logError("Bayesian (%s) problems require defining reference data.\n", _likelihoodModel.c_str());
   if (_computationalVariableIndices.size() != 0) korali::logError("Bayesian (%s) problems do not accept computational parameters.\n", _likelihoodModel.c_str() );
 
-  if (_likelihoodModel == "Truncated Normal") if (_statisticalVariableIndices.size() != 4) korali::logError("Approximate Truncated Normal problems require exactly four statistical parameters.\n");
-  if (_likelihoodModel == "Normal") if (_statisticalVariableIndices.size() != 2) korali::logError("Approximate Normal problems require exactly two statistical parameters.\n");
+  if (_likelihoodModel == "Truncated Gaussian") if (_statisticalVariableIndices.size() != 4) korali::logError("Approximate Truncated Gaussian problems require exactly four statistical parameters.\n");
+  if (_likelihoodModel == "Gaussian") if (_statisticalVariableIndices.size() != 2) korali::logError("Approximate Gaussian problems require exactly two statistical parameters.\n");
 }
 
 void korali::problem::evaluation::bayesian::inference::Approximate::evaluateLogLikelihood(korali::Sample& sample)
 {
-  if (_likelihoodModel == "Truncated Normal") likelihoodTruncatedNormal(sample);
-  if (_likelihoodModel == "Normal")           likelihoodNormal(sample);
+  if (_likelihoodModel == "Truncated Gaussian") likelihoodTruncatedGaussian(sample);
+  if (_likelihoodModel == "Gaussian")           likelihoodGaussian(sample);
 }
 
-void korali::problem::evaluation::bayesian::inference::Approximate::likelihoodNormal(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Approximate::likelihoodGaussian(korali::Sample& sample)
 {
   double mu     = sample["Parameters"][_statisticalVariableIndices[0]];
   double sigma  = sample["Parameters"][_statisticalVariableIndices[1]];
@@ -38,7 +38,7 @@ void korali::problem::evaluation::bayesian::inference::Approximate::likelihoodNo
   sample["logLikelihood"] = -logNormalization - 0.5*ssn/sigma2;
 }
 
-void korali::problem::evaluation::bayesian::inference::Approximate::likelihoodTruncatedNormal(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Approximate::likelihoodTruncatedGaussian(korali::Sample& sample)
 {
   double a      = sample["Parameters"][_statisticalVariableIndices[0]];
   double b      = sample["Parameters"][_statisticalVariableIndices[1]];

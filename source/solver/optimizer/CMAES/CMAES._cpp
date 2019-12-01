@@ -13,13 +13,13 @@ void korali::solver::optimizer::CMAES::initialize()
  korali::solver::Optimizer::initialize();
 
  // Initializing RNGs
- auto jsNormal = nlohmann::json();
- jsNormal["Name"] = "Normal Generator";
- jsNormal["Type"] = "Univariate/Normal";
- jsNormal["Mean"] = 0.0;
- jsNormal["Standard Deviation"] = 1.0;
- _normalGenerator = dynamic_cast<korali::distribution::univariate::Normal*>(korali::Module::getModule(jsNormal));
- _normalGenerator->initialize();
+ auto jsGaussian = nlohmann::json();
+ jsGaussian["Name"] = "Gaussian Generator";
+ jsGaussian["Type"] = "Univariate/Gaussian";
+ jsGaussian["Mean"] = 0.0;
+ jsGaussian["Standard Deviation"] = 1.0;
+ _gaussianGenerator = dynamic_cast<korali::distribution::univariate::Gaussian*>(korali::Module::getModule(jsGaussian));
+ _gaussianGenerator->initialize();
 
  auto jsUniform = nlohmann::json();
  jsUniform["Name"] = "Uniform Generator";
@@ -424,7 +424,7 @@ void korali::solver::optimizer::CMAES::sampleSingle(size_t sampleIdx)
 {
   for (size_t d = 0; d < N; ++d)
   {
-   double randomNumber = _normalGenerator->getRandomNumber();
+   double randomNumber = _gaussianGenerator->getRandomNumber();
 
    if (_isDiagonal)
    {

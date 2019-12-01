@@ -1,16 +1,17 @@
-#ifndef _KORALI_DISTRIBUTION_UNIVARIATE_NORMAL_HPP_
-#define _KORALI_DISTRIBUTION_UNIVARIATE_NORMAL_HPP_
+#ifndef _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_
+#define _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_
 
 #include "distribution/univariate/univariate.hpp"
 
 namespace korali { namespace distribution { namespace univariate {
 
-class Normal : public korali::distribution::Univariate {
+class TruncatedGaussian : public korali::distribution::Univariate {
 
  private:
+
    double _normalization;
    double _logNormalization;
-   
+
  public:
 
  void updateDistribution() override;
@@ -21,4 +22,4 @@ class Normal : public korali::distribution::Univariate {
 
 } } } // namespace korali::distribution::univariate
 
-#endif // _KORALI_DISTRIBUTION_UNIVARIATE_NORMAL_HPP_
+#endif // _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_

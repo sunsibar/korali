@@ -2,7 +2,7 @@
 #define _KORALI_SOLVER_MCMC_HPP_
 
 #include "solver/sampler/sampler.hpp"
-#include "distribution/univariate/normal/normal.hpp"
+#include "distribution/univariate/gaussian/gaussian.hpp"
 #include "distribution/univariate/uniform/uniform.hpp"
 #include "problem/evaluation/evaluation.hpp"
 #include <vector>
@@ -13,7 +13,7 @@ class MCMC : public korali::solver::Sampler
 {
  private: 
 
- korali::distribution::univariate::Normal* _normalGenerator; /* Normal random number generator */
+ korali::distribution::univariate::Gaussian* _gaussianGenerator; /* Gaussian random number generator */
  korali::distribution::univariate::Uniform* _uniformGenerator; /* Uniform random number generator */
 
  double recursiveAlpha(double& deonominator, const double leaderLoglikelihood, const double* loglikelihoods, size_t N) const;

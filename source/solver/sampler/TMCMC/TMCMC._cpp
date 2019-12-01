@@ -31,8 +31,8 @@ void korali::solver::sampler::TMCMC::initialize()
 
   auto jsMultivariate = nlohmann::json();
   jsMultivariate["Name"] = "TMCMC Multivariate Generator";
-  jsMultivariate["Type"] = "Multivariate/Normal";
-  _multivariateGenerator = dynamic_cast<korali::distribution::multivariate::Normal*>(korali::Module::getModule(jsMultivariate));
+  jsMultivariate["Type"] = "Multivariate/Gaussian";
+  _multivariateGenerator = dynamic_cast<korali::distribution::multivariate::Gaussian*>(korali::Module::getModule(jsMultivariate));
   _multivariateGenerator->initialize();
 
   auto jsUniform = nlohmann::json();
@@ -141,11 +141,11 @@ void korali::solver::sampler::TMCMC::generateCandidate(size_t c)
   std::vector<double> _currentMean;
   for (size_t i = 0; i < N; i++) _currentMean.push_back(_chainLeaders[c][i]);
 
-  auto jsMultivariateNormalConfig = nlohmann::json();
-  jsMultivariateNormalConfig["Name"] = "TMCMC Multivariate Generator";
-  jsMultivariateNormalConfig["Covariance Matrix"] = _covarianceMatrix;
-  jsMultivariateNormalConfig["Mean Vector"] = _currentMean;
-  _multivariateGenerator->setConfiguration(jsMultivariateNormalConfig);
+  auto jsMultivariateGaussianConfig = nlohmann::json();
+  jsMultivariateGaussianConfig["Name"] = "TMCMC Multivariate Generator";
+  jsMultivariateGaussianConfig["Covariance Matrix"] = _covarianceMatrix;
+  jsMultivariateGaussianConfig["Mean Vector"] = _currentMean;
+  _multivariateGenerator->setConfiguration(jsMultivariateGaussianConfig);
   _multivariateGenerator->updateDistribution();
   _multivariateGenerator->getRandomVector(&_chainCandidates[c][0],  N);
 }

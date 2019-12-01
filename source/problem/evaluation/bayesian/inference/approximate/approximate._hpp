@@ -9,8 +9,8 @@ class Approximate : public korali::problem::evaluation::bayesian::Inference
 {
  private:
 
- void likelihoodTruncatedNormal(korali::Sample& sample);
- void likelihoodNormal(korali::Sample& sample);
+ void likelihoodTruncatedGaussian(korali::Sample& sample);
+ void likelihoodGaussian(korali::Sample& sample);
 
  public:
 

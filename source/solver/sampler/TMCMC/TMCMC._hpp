@@ -4,7 +4,7 @@
 #include "solver/sampler/sampler.hpp"
 #include "distribution/distribution.hpp"
 #include "distribution/univariate/uniform/uniform.hpp"
-#include "distribution/multivariate/normal/normal.hpp"
+#include "distribution/multivariate/gaussian/gaussian.hpp"
 #include "distribution/specific/multinomial/multinomial.hpp"
 #include "problem/evaluation/bayesian/bayesian.hpp"
 #include <gsl/gsl_vector.h>
@@ -24,8 +24,8 @@ class TMCMC : public korali::solver::Sampler
  static double tmcmc_objlogp(double x, const double *fj, size_t fn, double pj, double zero);
  static double objLog(const gsl_vector *v, void *param);
 
- korali::distribution::specific::Multinomial* _multinomialGenerator; /* Multivariate Normal random number generator */
- korali::distribution::multivariate::Normal* _multivariateGenerator; /* Multivariate Normal random number generator */
+ korali::distribution::specific::Multinomial* _multinomialGenerator; /* Multivariate Gaussian random number generator */
+ korali::distribution::multivariate::Gaussian* _multivariateGenerator; /* Multivariate Gaussian random number generator */
  korali::distribution::univariate::Uniform* _uniformGenerator; /* Uniform random number generator */
 
  size_t N; // Number of variables

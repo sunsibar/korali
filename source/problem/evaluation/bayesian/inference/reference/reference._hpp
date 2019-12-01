@@ -12,10 +12,10 @@ class Reference : public korali::problem::evaluation::bayesian::Inference
 
  double computeSSE( std::vector<double> x, std::vector<double> y );
 
- void loglikelihoodNormalAdditive(korali::Sample& sample);
- void loglikelihoodNormalAdditiveVariance(korali::Sample& sample);
- void loglikelihoodNormalMultiplicative(korali::Sample& sample);
- void loglikelihoodNormalMultiplicativeData(korali::Sample& sample);
+ void loglikelihoodGaussianAdditive(korali::Sample& sample);
+ void loglikelihoodGaussianAdditiveVariance(korali::Sample& sample);
+ void loglikelihoodGaussianMultiplicative(korali::Sample& sample);
+ void loglikelihoodGaussianMultiplicativeData(korali::Sample& sample);
 
  public:
 

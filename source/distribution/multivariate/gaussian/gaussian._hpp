@@ -5,7 +5,7 @@
 
 namespace korali { namespace distribution { namespace multivariate {
 
-class Normal : public korali::distribution::Multivariate {
+class Gaussian : public korali::distribution::Multivariate {
 
  private:
 

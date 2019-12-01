@@ -17,10 +17,10 @@ void korali::problem::evaluation::bayesian::inference::Reference::evaluateLogLik
   if (sample["Reference Evaluations"].size() != _referenceData.size())
     korali::logError("This Bayesian (%s) problem requires a %lu-sized result array. Provided: %lu.\n", _likelihoodModel.c_str(), _referenceData.size(), sample["Reference Evaluations"].size());
 
-  if (_likelihoodModel == "Additive Normal")            loglikelihoodNormalAdditive(sample);
-  if (_likelihoodModel == "Additive Normal Variance")   loglikelihoodNormalAdditiveVariance(sample);
-  if (_likelihoodModel == "Multiplicative Normal")      loglikelihoodNormalMultiplicative(sample);
-  if (_likelihoodModel == "Multiplicative Normal Data") loglikelihoodNormalMultiplicativeData(sample);
+  if (_likelihoodModel == "Additive Gaussian")            loglikelihoodGaussianAdditive(sample);
+  if (_likelihoodModel == "Additive Gaussian Variance")   loglikelihoodGaussianAdditiveVariance(sample);
+  if (_likelihoodModel == "Multiplicative Gaussian")      loglikelihoodGaussianMultiplicative(sample);
+  if (_likelihoodModel == "Multiplicative Gaussian Data") loglikelihoodGaussianMultiplicativeData(sample);
 }
 
 double korali::problem::evaluation::bayesian::inference::Reference::computeSSE( std::vector<double> x, std::vector<double> y ){
@@ -39,7 +39,7 @@ double korali::problem::evaluation::bayesian::inference::Reference::computeSSE( 
   return sse;
 }
 
-void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodNormalAdditive(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodGaussianAdditive(korali::Sample& sample)
 {
   double sigma   = sample["Parameters"][_statisticalVariableIndices[0]];
   double sigma2  = sigma*sigma;
@@ -52,7 +52,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodN
     sample["logLikelihood"] = -0.5*( _referenceData.size()*log(2*M_PI*sigma2) + sse/sigma2);
 }
 
-void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodNormalAdditiveVariance(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodGaussianAdditiveVariance(korali::Sample& sample)
 {
   double sigma2 = sample["Parameters"][_statisticalVariableIndices[0]];
 
@@ -64,7 +64,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodN
     sample["logLikelihood"] = -0.5*( _referenceData.size()*log(2*M_PI*sigma2) + sse/sigma2);
 }
 
-void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodNormalMultiplicative(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodGaussianMultiplicative(korali::Sample& sample)
 {
   double sigma    = sample["Parameters"][_statisticalVariableIndices[0]];
   double ssn      = 0.0;
@@ -90,7 +90,7 @@ void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodN
   sample["logLikelihood"] = -0.5*( _referenceData.size()*log(2*M_PI) + ssn) - _referenceData.size()*logSigma;
 }
 
-void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodNormalMultiplicativeData(korali::Sample& sample)
+void korali::problem::evaluation::bayesian::inference::Reference::loglikelihoodGaussianMultiplicativeData(korali::Sample& sample)
 {
   double sigma    = sample["Parameters"][_statisticalVariableIndices[0]];
   double ssn      = 0.0;
