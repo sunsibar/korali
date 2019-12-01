@@ -12,7 +12,7 @@ for i in range(5):
   e = korali.Experiment()
   
   e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Approximate"
-  e["Problem"]["Likelihood Model"] = "Normal"
+  e["Problem"]["Likelihood Model"] = "Gaussian"
   e["Problem"]["Reference Data"] = getReferenceData("setup/data/",i);
   
   # Configuring the problem's random distributions

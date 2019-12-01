@@ -35,7 +35,7 @@ e["Distributions"][0]["Minimum"] = 280
 e["Distributions"][0]["Maximum"] = 320
 
 e["Distributions"][1]["Name"] = "Conditional 1"
-e["Distributions"][1]["Type"] = "Univariate/Normal"
+e["Distributions"][1]["Type"] = "Univariate/Gaussian"
 e["Distributions"][1]["Mean"] = "Psi 1"
 e["Distributions"][1]["Standard Deviation"] = "Psi 2"
 

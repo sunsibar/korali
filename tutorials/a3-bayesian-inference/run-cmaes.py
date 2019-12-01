@@ -15,7 +15,7 @@ e = korali.Experiment()
 
 # Setting up the reference likelihood for the Bayesian Problem
 e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Reference"
-e["Problem"]["Likelihood Model"] = "Additive Normal"
+e["Problem"]["Likelihood Model"] = "Additive Gaussian"
 e["Problem"]["Reference Data"] = getReferenceData()
 e["Problem"]["Computational Model"] = lambda sampleData: model(sampleData, getReferencePoints())
 

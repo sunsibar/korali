@@ -37,9 +37,9 @@
    },
    {
     "Name": [ "Random Number Distribution" ],
-    "Default": "Normal",
+    "Default": "Gaussian",
     "Type": "std::string",
-    "Description": "Random Number to mutate, 'Normal', 'Uniform'."
+    "Description": "Random Number to mutate, 'Gaussian', 'Uniform'."
    }, 
    {
     "Name": [ "Symmetric Sampling" ],

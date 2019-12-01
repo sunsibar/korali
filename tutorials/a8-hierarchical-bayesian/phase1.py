@@ -15,7 +15,7 @@ for i in range(5):
   x = getReferencePoints("setup/data/", i);
   
   e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Reference"
-  e["Problem"]["Likelihood Model"] = "Additive Normal"
+  e["Problem"]["Likelihood Model"] = "Additive Gaussian"
   e["Problem"]["Reference Data"] = getReferenceData("setup/data/", i);
   e["Problem"]["Computational Model"] = lambda d: logistic( x, d);
   

@@ -27,7 +27,7 @@ e["Problem"]["Conditional Priors"] = [ "Conditional 0", "Conditional 1" ]
 
 # Configuring the problem's random distributions
 e["Distributions"][0]["Name"] = "Conditional 0"
-e["Distributions"][0]["Type"] = "Univariate/Normal"
+e["Distributions"][0]["Type"] = "Univariate/Gaussian"
 e["Distributions"][0]["Mean"] = "Psi 1"
 e["Distributions"][0]["Standard Deviation"] = "Psi 2"
 
