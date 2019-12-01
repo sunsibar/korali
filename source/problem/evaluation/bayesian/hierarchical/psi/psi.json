@@ -11,5 +11,14 @@
     "Type": "std::vector<std::string>",
     "Description": "List of conditional priors to use in the hierarchical problem."
    }
+ ],
+
+ "Suproblems Configuration":
+ [
+   {
+    "Name": [ "Path" ],
+    "Type": "std::string",
+    "Description": "Provides results from previous Korali executions."
+   }
  ]
 }

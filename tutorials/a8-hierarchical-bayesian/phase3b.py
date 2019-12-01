@@ -16,7 +16,6 @@ e["Problem"]["Psi Problem Path"] = 'setup/results_phase_2/'
 
 e["Solver"]["Type"] = "Sampler/TMCMC"
 e["Solver"]["Population Size"] = 1000
-e["Solver"]["Termination Criteria"]["Max Generations"] = 30
 e["Solver"]["Default Burn In"] = 1;
 e["Solver"]["Target Coefficient Of Variation"] = 0.6
 

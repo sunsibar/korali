@@ -59,6 +59,14 @@ def buildProblems(koraliDir):
     for v in problemConfig["Termination Criteria"]: 
      terminationSettingsString += getVariableInfo(v, problemName)
    problemDocString = problemDocString.replace('### Termination Criteria', terminationSettingsString + '\n\n')
+ 
+   subproblemSettingsString = '### Subproblems Configuration\n\n'
+   if (not "Termination Criteria" in problemConfig): subproblemSettingsString+= '*none*'
+   else:
+    for v in problemConfig["Subprblems Configuration"]: 
+     subproblemsSettingsString += getVariableInfo(v, problemName)
+     print("TEST: " + v)
+   problemDocString = problemDocString.replace('### Subrpoblems Configuration', subproblemsSettingsString + '\n\n')
      
    mdFileName = koraliDir + '/docs/docs/manual/problem/' + problemName + '.md'
    print('[Korali] Creating ' + mdFileName + '...')    
