@@ -24,8 +24,8 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     korali::logError("The Hierarchical Bayesian (Theta) can only accept a psi-problem of type 'Evaluation/Bayesian/Hierarchical/Psi' but psi-Problem is of type: '%s'.\n", psiProblemType.c_str());
 
   // Cross-checks
-  if (_psiProblemEngine["Problem"]["Conditional Priors"].size() != _thetaProblemEngine["Variables"].size())
-    korali::logError("Sub-problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), _psiProblemEngine["Problem"]["Conditional Priors"].size());
+  //if (_psiProblemEngine["Problem"]["Conditional Priors"].size() != _thetaProblemEngine["Variables"].size())
+    //korali::logError("Sub-problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), _psiProblemEngine["Problem"]["Conditional Priors"].size());
 
   // Now inheriting Sub problem's variables
   _k->_distributions = _thetaProblemEngine._distributions;

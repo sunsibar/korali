@@ -10,7 +10,7 @@ e = korali.Experiment()
 
 e["Problem"]["Type"]  = "Evaluation/Bayesian/Hierarchical/Psi"
 for i in range(5):
-  e["Problem"]["Subproblems"][i]["Path"]   = 'setup/results_phase_1/' + str(i).zfill(3)
+  e["Problem"]["Subproblems"][i]["Path"] = 'setup/results_phase_1/' + str(i).zfill(3)
   e["Problem"]["Subproblems"][i]["Conditional Priors"] = ["Conditional 0", "Conditional 1", "Conditional 2", "Conditional 3"]
 
 # Add probability of theta given psi, one per subproblem variable.
