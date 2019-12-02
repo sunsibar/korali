@@ -34,7 +34,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
   }
 
   if ( _thetaProblemEngine["Variables"].size() != cset.size() )
-    korali::logError("Theta problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
+    korali::logError("Theta problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), cset.size());
  
   // Now inheriting Sub problem's variables
   _k->_distributions = _thetaProblemEngine._distributions;
