@@ -19,11 +19,18 @@ e["Distributions"][1]["Type"] = "Univariate/Uniform"
 e["Distributions"][1]["Minimum"] = 0.0
 e["Distributions"][1]["Maximum"] = 10.0
 
+e["Distributions"][2]["Name"] = "Uniform 2"
+e["Distributions"][2]["Type"] = "Univariate/Uniform"
+e["Distributions"][2]["Minimum"] = 0.0
+e["Distributions"][2]["Maximum"] = 15.0
+
 e["Variables"][0]["Name"] = "mu"
-e["Variables"][1]["Name"] = "sigma"
+e["Variables"][1]["Name"] = "sigma1"
+e["Variables"][2]["Name"] = "sigma2"
 
 e["Variables"][0]["Prior Distribution"] = "Uniform 0"
 e["Variables"][1]["Prior Distribution"] = "Uniform 1"
+e["Variables"][2]["Prior Distribution"] = "Uniform 2"
 
 e["Solver"]["Type"] = "Sampler/TMCMC"
 e["Solver"]["Population Size"] = 1000

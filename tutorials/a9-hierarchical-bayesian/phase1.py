@@ -29,11 +29,16 @@ for i in range(5):
   e["Variables"][0]["Name"] = "mu"
   e["Variables"][0]["Bayesian Type"] = "Statistical"
   e["Variables"][0]["Prior Distribution"] = "Uniform 0"
-  
-  e["Variables"][1]["Name"] = "sigma"
-  e["Variables"][1]["Bayesian Type"] = "Statistical"
-  e["Variables"][1]["Prior Distribution"] = "Uniform 1"
-  
+ 
+  if i < 4:
+    e["Variables"][1]["Name"] = "sigma1"
+    e["Variables"][1]["Bayesian Type"] = "Statistical"
+    e["Variables"][1]["Prior Distribution"] = "Uniform 1"
+  else:
+    e["Variables"][1]["Name"] = "sigma2"
+    e["Variables"][1]["Bayesian Type"] = "Statistical"
+    e["Variables"][1]["Prior Distribution"] = "Uniform 1"
+
   e["Solver"]["Type"] = "Sampler/TMCMC"
   e["Solver"]["Population Size"] = 1000
   e["Solver"]["Target Coefficient Of Variation"] = 0.6
