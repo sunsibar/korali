@@ -42,6 +42,10 @@ void korali::problem::evaluation::bayesian::hierarchical::ThetaNew::initialize()
     double expPrior = exp(_psiProblemSampleLogPriors[i]);
     if( std::isfinite(expPrior) == false )
       korali::logError("Non finite (%lf) prior has been detected at sample %zu in subproblem.\n", expPrior, i );
+
+    double llk = exp(_psiProblemSampleLogLikelihoods[i]);
+    if( std::isfinite(llk) == false )
+      korali::logError("Non finite (%lf) loglikelihood has been detected at sample %zu in Psi problem.\n", expPrior, i );
   }
 }
 
