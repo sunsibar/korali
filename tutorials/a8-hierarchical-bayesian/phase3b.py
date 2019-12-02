@@ -11,7 +11,7 @@ from model import *
 e = korali.Experiment()
 
 e["Problem"]["Type"]  = "Evaluation/Bayesian/Hierarchical/Theta"
-e["Problem"]["Theta Problem Path"] = 'setup/results_phase_1/000/'
+e["Problem"]["Theta Problem Path"] = 'setup/results_phase_1/000'
 e["Problem"]["Psi Problem Path"] = 'setup/results_phase_2/'
 
 e["Solver"]["Type"] = "Sampler/TMCMC"
