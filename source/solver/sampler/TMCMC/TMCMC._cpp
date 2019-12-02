@@ -185,13 +185,18 @@ void korali::solver::sampler::TMCMC::processGeneration()
 
   _previousAnnealingExponent = _annealingExponent;
 
-  if( xmin > _previousAnnealingExponent + _maxAnnealingExponentUpdate )
+  if( xmin >= 1.0 )
+  {
+    _annealingExponent = 1.0;
+    _coefficientOfVariation = sqrt(tmcmc_objlogp(_annealingExponent, &_sampleLogLikelihoodDatabase[0], _populationSize, _previousAnnealingExponent, _targetCoefficientOfVariation)) + _targetCoefficientOfVariation;
+  }
+  else if( xmin > _previousAnnealingExponent + _maxAnnealingExponentUpdate )
   {
     korali::logWarning("Detailed", "Annealing Step larger than Max Rho Update, updating Annealing Exponent by %f (Max Rho Update). \n", _maxAnnealingExponentUpdate);
     _annealingExponent      = _previousAnnealingExponent + _maxAnnealingExponentUpdate;
     _coefficientOfVariation = sqrt(tmcmc_objlogp(_annealingExponent, _sampleLogLikelihoodDatabase.data(), _populationSize, _previousAnnealingExponent, _targetCoefficientOfVariation)) + _targetCoefficientOfVariation;
   }
-  else if( xmin > _previousAnnealingExponent )
+  else if( xmin > _previousAnnealingExponent + _minAnnealingExponentUpdate )
   {
     _annealingExponent      = xmin;
     _coefficientOfVariation = sqrt(fmin) + _targetCoefficientOfVariation;
