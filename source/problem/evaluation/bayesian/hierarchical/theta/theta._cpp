@@ -33,8 +33,8 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
       cset.insert(tmpVec.begin(), tmpVec.end());
   }
 
-  if ( _thetaProblemEngine["Variables"].size() != cset.size() )
-    korali::logError("Theta problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), cset.size());
+  if ( cset.size() < _thetaProblemEngine["Variables"].size())
+   korali::logError("Theta problem contains more variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), cset.size());
  
   // Now inheriting Sub problem's variables
   _k->_distributions = _thetaProblemEngine._distributions;
@@ -45,7 +45,6 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
 
   // Loading Psi problem results
   _psiProblemSampleCount = _psiProblemEngine["Solver"]["Internal"]["Chain Leaders LogLikelihoods"].size();
-  _psiProblemSampleLogLikelihoods = _psiProblemEngine["Solver"]["Internal"]["Sample LogLikelihood Database"].get<std::vector<double>>();
   _psiProblemSampleLogPriors = _psiProblemEngine["Solver"]["Internal"]["Sample LogPrior Database"].get<std::vector<double>>();
   _psiProblemSampleCoordinates = _psiProblemEngine["Solver"]["Internal"]["Sample Database"].get<std::vector<std::vector<double>>>();
 
@@ -54,10 +53,6 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     double expPrior = exp(_psiProblemSampleLogPriors[i]);
     if( std::isfinite(expPrior) == false )
       korali::logError("Non finite (%lf) prior has been detected at sample %zu in Psi problem.\n", expPrior, i );
-
-    double llk = exp(_psiProblemSampleLogLikelihoods[i]);
-    if( std::isfinite(llk) == false )
-      korali::logError("Non finite (%lf) loglikelihood has been detected at sample %zu in Psi problem.\n", expPrior, i );
   }
 
   // Loading Theta problem results
@@ -78,6 +73,19 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
 
   _psiProblem = dynamic_cast<korali::problem::evaluation::bayesian::hierarchical::Psi*>(_psiProblemEngine._problem);
 
+  bool subproblemFound = false;
+  for(size_t i = 0; i < _psiProblem->_subproblems.size(); ++i)
+  {
+      if(_psiProblem->_subproblems[i]->_path.compare(_thetaProblemPath) == 0) 
+      { 
+          subproblemFound = true; 
+          _subProblemConditionalPriors = &_psiProblem->_subproblems[i]->_conditionalPriorIndices;
+      }
+  }
+  if ( subproblemFound == false )
+   korali::logError("Theta problem path (%s) not found in Psi problem, cannot link subproblems.", _thetaProblemPath.c_str());
+
+
   for (size_t i = 0; i < _psiProblemSampleCount; i++)
   {
     korali::Sample psiSample;
@@ -89,7 +97,10 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     {
       double logConditionalPrior = 0;
       for (size_t k = 0; k < _thetaVariableCount; k++)
-        logConditionalPrior += _psiProblemEngine._distributions[_psiProblem->_conditionalPriorIndexes[k]]->getLogDensity( _thetaProblemSampleCoordinates[j][k] );
+      {
+        size_t idx = (*_subProblemConditionalPriors)[k];
+        logConditionalPrior += _psiProblemEngine._distributions[idx]->getLogDensity( _thetaProblemSampleCoordinates[j][k] );
+      }
 
       logValues[j] = logConditionalPrior - _thetaProblemSampleLogPriors[j];
     }
@@ -118,9 +129,11 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::evaluateLogLike
    _psiProblem->updateConditionalPriors(psiSample);
 
    double logConditionalPrior = 0.;
-   for (size_t k = 0; k < _thetaVariableCount; k++)
-     logConditionalPrior += _psiProblemEngine._distributions[_psiProblem->_conditionalPriorIndexes[k]]->getLogDensity(sample["Parameters"][k]);
-
+   for (size_t k = 0; k < _thetaVariableCount; k++) 
+   {
+     size_t idx = (*_subProblemConditionalPriors)[k];
+     logConditionalPrior += _psiProblemEngine._distributions[idx]->getLogDensity(sample["Parameters"][k]);
+   }
    logValues[i] = logConditionalPrior - _precomputedLogDenominator[i];
  }
 

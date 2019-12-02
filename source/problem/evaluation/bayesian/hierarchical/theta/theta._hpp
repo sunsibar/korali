@@ -13,6 +13,7 @@ class Theta : public korali::problem::evaluation::bayesian::Hierarchical
  korali::Experiment _psiProblemEngine;
  size_t _psiVariableCount;
  size_t _psiProblemSampleCount;
+ std::vector<size_t>* _subProblemConditionalPriors; // pointing to conditional prior indices of subproblem
  std::vector<std::vector<double>> _psiProblemSampleCoordinates;
  std::vector<double> _psiProblemSampleLogLikelihoods;
  std::vector<double> _psiProblemSampleLogPriors;

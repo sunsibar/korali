@@ -13,10 +13,8 @@ for i in range(4):
   e["Problem"]["Subproblems"][i]["Path"]   = 'setup/results_phase_1/' + str(i).zfill(3)
   e["Problem"]["Subproblems"][i]["Conditional Priors"] = ["Conditional 0", "Conditional 1"]
 
-for i in range(4,5):
-  e["Problem"]["Subproblems"][i]["Path"]   = 'setup/results_phase_1/' + str(i).zfill(3)
-  e["Problem"]["Subproblems"][i]["Conditional Priors"] = ["Conditional 0", "Conditional 2"]
-
+e["Problem"]["Subproblems"][4]["Path"]   = 'setup/results_phase_1/' + str(4).zfill(3)
+e["Problem"]["Subproblems"][4]["Conditional Priors"] = ["Conditional 0", "Conditional 2"]
 
 # Add probability of theta given psi, one per subproblem variable.
 e["Variables"][0]["Name"] = "Psi 1"
@@ -51,7 +49,7 @@ e["Distributions"][2]["Sigma"] = "Psi 6"
 
 e["Distributions"][3]["Name"] = "Uniform 0"
 e["Distributions"][3]["Type"] = "Univariate/Uniform"
-e["Distributions"][3]["Minimum"] = 0.0
+e["Distributions"][3]["Minimum"] = -20.0
 e["Distributions"][3]["Maximum"] = 20.0
 
 e["Distributions"][4]["Name"] = "Uniform 1"

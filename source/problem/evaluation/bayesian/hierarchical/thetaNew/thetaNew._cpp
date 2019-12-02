@@ -63,7 +63,7 @@ void korali::problem::evaluation::bayesian::hierarchical::ThetaNew::evaluateLogL
    _psiProblem->updateConditionalPriors(psiSample);
 
    logValues[i] = 0.;
-   for (size_t k = 0; k < Ntheta; k++)
+   for (size_t k = 0; k < Ntheta; k++) //TODO: confirm that we iterate over Ntheta (all conditional distributions)
      logValues[i] += _psiProblemEngine._distributions[_psiProblem->_conditionalPriorIndexes[k]]->getLogDensity(sample["Parameters"][k]);
  }
 

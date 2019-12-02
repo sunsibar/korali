@@ -51,7 +51,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
  {
    _subproblems[j]->_conditionalPriorIndices.resize(0);
    for (size_t i = 0; i < _conditionalPriorsCount; i++) 
-     for(auto& name : _subproblems[j]->_conditionalPriors) if (name == _conditionalPriorSet[i]) _subproblems[j]->_conditionalPriorIndices.push_back(i);
+     for(auto& name : _subproblems[j]->_conditionalPriors) if (name == _conditionalPriorSet[i]) _subproblems[j]->_conditionalPriorIndices.push_back(_conditionalPriorIndexes[i]);
     
    if(_subproblems[j]->_conditionalPriorIndices.size() == 0 ) 
        korali::logError("No prior assigned to subproblem %zu.\n", j );
@@ -90,9 +90,9 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
    if( std::isfinite(expPrior) == false )
      korali::logError("Non finite (%lf) prior has been detected at sample %zu in subproblem %zu.\n", expPrior, j, i );
  
-   double expLlk = exp(_subProblemsSampleLogLikelihoods[i][j]);
-   if( std::isfinite(expLlk) == false )
-     korali::logError("Non finite (%lf) likelihood has been detected at sample %zu in subproblem %zu.\n", expLlk, j, i );
+   double llk = exp(_subProblemsSampleLogLikelihoods[i][j]);
+   if( std::isfinite(llk) == false )
+     korali::logError("Non finite (%lf) likelihood has been detected at sample %zu in subproblem %zu.\n", llk, j, i );
   }
  }
 
@@ -156,10 +156,9 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::evaluateLogLikeli
    {
     logValues[j] = -_subProblemsSampleLogPriors[i][j];
     for( size_t k = 0; k < _subproblems[i]->_conditionalPriorIndices.size(); k++ )
-    //for( size_t k = 0; k < _conditionalPriorsCount; k++ )
     {
      size_t idx = _subproblems[i]->_conditionalPriorIndices[k];
-     logValues[j] += _k->_distributions[_conditionalPriorIndexes[idx]]->getLogDensity(_subProblemsSampleCoordinates[i][j][idx]);
+     logValues[j] += _k->_distributions[idx]->getLogDensity(_subProblemsSampleCoordinates[i][j][k]);
     }
    }
 
