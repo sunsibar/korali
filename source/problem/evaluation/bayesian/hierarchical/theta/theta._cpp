@@ -28,8 +28,11 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
   // Cross-checks
   std::set<std::string> cset;
   for (size_t j = 0; j < _psiProblemEngine["Problem"]["Subproblems"].size(); j++) 
-      cset.insert(_psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].begin(), _psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].end());
-  
+  {
+      std::vector<std::string>&& tmpVec = _psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"];
+      cset.insert(tmpVec.begin(), tmpVec.end());
+  }
+
   if ( _thetaProblemEngine["Variables"].size() != cset.size() )
     korali::logError("The problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
  
