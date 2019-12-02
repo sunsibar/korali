@@ -12,7 +12,7 @@ e["Problem"]["Type"]  = "Evaluation/Bayesian/Hierarchical/Psi"
 e["Problem"]["Sub Problems"] = ['nan'] # tmp dummy since required
 for i in range(5):
   e["Problem"]["Subproblems"][i]["Path"]   = 'setup/results_phase_1/' + str(i).zfill(3)
-  e["Problem"]["Subproblems"][i]["Priors"] = ["Psi 1", "Psi 2", "Psi 3", "Psi 4", "Psi 5", "Psi 6"]
+  e["Problem"]["Subproblems"][i]["Priors"] = ["Conditioanl 0", "Conditional 1"]
 
 # Add probability of theta given psi, one per subproblem variable.
 

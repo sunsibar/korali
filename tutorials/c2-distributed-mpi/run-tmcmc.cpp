@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
  auto e = korali::Experiment();
 
  e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Reference";
- e["Problem"]["Likelihood Model"] = "Additive Normal";
+ e["Problem"]["Likelihood Model"] = "Additive Gaussian";
  e["Problem"]["Reference Data"] = getReferenceData();
  e["Problem"]["Computational Model"] = &jacobi;
 

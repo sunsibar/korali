@@ -26,9 +26,9 @@
     "Description": "Provides results from previous Korali executions."
    },
    {
-    "Name": [ "Priors" ],
+    "Name": [ "Conditional Priors" ],
     "Type": "std::vector<std::string>",
-    "Description": "Priors linked to Subproblem from Psi."
+    "Description": "Conditional Priors linked to Subproblem from Psi."
    }
  ]
 }

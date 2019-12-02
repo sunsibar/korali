@@ -13,8 +13,8 @@ class Subproblem
  // Variable Declaration List
  public:
  std::string _path; // dir of subproblem results
- std::vector<std::string> _priors; // linked priors of Psi
- std::vector<size_t> _priorsIdx; // index of linked priors of Psi
+ std::vector<std::string> _conditionalPriors; // linked priors of Psi
+ std::vector<size_t> _conditionalPriorIndices; // index of linked priors of Psi
 
 };
 
