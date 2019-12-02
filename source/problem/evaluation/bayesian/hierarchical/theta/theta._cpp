@@ -34,7 +34,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
   }
 
   if ( _thetaProblemEngine["Variables"].size() != cset.size() )
-    korali::logError("The problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
+    korali::logError("Theta problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
  
   // Now inheriting Sub problem's variables
   _k->_distributions = _thetaProblemEngine._distributions;
@@ -54,6 +54,10 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     double expPrior = exp(_psiProblemSampleLogPriors[i]);
     if( std::isfinite(expPrior) == false )
       korali::logError("Non finite (%lf) prior has been detected at sample %zu in Psi problem.\n", expPrior, i );
+
+    double llk = exp(_psiProblemSampleLogLikelihoods[i]);
+    if( std::isfinite(llk) == false )
+      korali::logError("Non finite (%lf) loglikelihood has been detected at sample %zu in Psi problem.\n", expPrior, i );
   }
 
   // Loading Theta problem results
