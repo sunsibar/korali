@@ -19,11 +19,12 @@ class Psi : public korali::problem::evaluation::bayesian::Hierarchical
 
  std::vector<korali::Experiment> _subProblemEngines;
  size_t _subProblemsCount;
- size_t _subProblemsVariablesCount;
+ size_t _conditionalPriorsCount;
  std::vector<std::vector<std::vector<double>>> _subProblemsSampleCoordinates;
  std::vector<std::vector<double>> _subProblemsSampleLogLikelihoods;
  std::vector<std::vector<double>> _subProblemsSampleLogPriors;
 
+ std::vector<std::string> _conditionalPriorSet; // Set of all conditional priors
  std::vector<conditionalPriorInfo> _conditionalPriorInfos;
 
  public:

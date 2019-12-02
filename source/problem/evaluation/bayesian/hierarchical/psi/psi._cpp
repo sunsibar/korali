@@ -3,30 +3,40 @@
 #include "experiment/experiment.hpp"
 #include "conduit/conduit.hpp"
 
+#include <set>
+
 void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
 {
  korali::problem::evaluation::bayesian::Hierarchical::initialize();
+ 
+ // Obtaining sub problem count
+ _subProblemsCount = _subproblems.size();
+ if (_subProblemsCount < 2) korali::logError("Hierarchical Bayesian (Psi) problem requires defining at least two executed sub-problems.\n");
+ 
+ // Extract all conditional priors
+ std::set<std::string> cset;
+ for (size_t j = 0; j < _subProblemsCount; j++) 
+     cset.insert(_subproblems[j]->_conditionalPriors.begin(), _subproblems[j]->_conditionalPriors.end());
+ 
+ _conditionalPriorSet.resize(cset.size());
+ std::copy(cset.begin(), cset.end(), _conditionalPriorSet.begin());
 
- _conditionalPriorIndexes.resize(_conditionalPriors.size());
+ // Obtaining variable counts
+ _conditionalPriorsCount = _conditionalPriorSet.size();
+ if (_conditionalPriorsCount == 0) korali::logError("Hierarchical Bayesian (Psi) problems require at least one conditional prior\n");
 
- if (_conditionalPriors.size() == 0) korali::logError("Hierarchical Bayesian (Psi) problems require at least one conditional prior\n");
-
- for (size_t i = 0; i < _conditionalPriors.size(); i++)
+ // Link conditional priors with distributions
+ _conditionalPriorIndexes.resize(_conditionalPriorsCount);
+ for (size_t i = 0; i < _conditionalPriorsCount; i++)
  {
   bool foundDistribution = false;
 
   for (size_t j = 0; j < _k->_distributions.size(); j++)
-   if (_conditionalPriors[i] == _k->_distributions[j]->_name) { foundDistribution = true; _conditionalPriorIndexes[i] = j; }
+   if (_conditionalPriorSet[i] == _k->_distributions[j]->_name) { foundDistribution = true; _conditionalPriorIndexes[i] = j; }
 
   if (foundDistribution == false)
-   korali::logError("Did not find conditional prior distribution %s\n", _conditionalPriors[i].c_str());
+   korali::logError("Did not find conditional prior distribution %s\n", _conditionalPriorSet[i].c_str());
  }
-
- if (_subproblems.size() < 2) korali::logError("Hierarchical Bayesian (Psi) problem requires defining at least two executed sub-problems.\n");
-
- // Obtaining sub problem count and variable counts
- _subProblemsCount = _subproblems.size();
- _subProblemsVariablesCount = _conditionalPriors.size();
 
  // Creating JSON object from string
  _subProblemEngines = std::vector<korali::Experiment>(_subProblemsCount);
@@ -36,11 +46,12 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
   _subProblemEngines[i].initialize();
  }
  
+ // Link subproblems with conditional priors
  for (size_t j = 0; j < _subProblemsCount; j++) 
  {
    _subproblems[j]->_conditionalPriorIndices.resize(0);
-   for (size_t i = 0; i < _k->_variables.size(); i++) 
-     for(auto& priorName : _subproblems[j]->_conditionalPriors) if (priorName == _k->_variables[i]->_name) _subproblems[j]->_conditionalPriorIndices.push_back(i);
+   for (size_t i = 0; i < _conditionalPriorsCount; i++) 
+     for(auto& name : _subproblems[j]->_conditionalPriors) if (name == _conditionalPriorSet[i]) _subproblems[j]->_conditionalPriorIndices.push_back(i);
     
    if(_subproblems[j]->_conditionalPriorIndices.size() == 0 ) 
        korali::logError("No prior assigned to subproblem %zu.\n", j );
@@ -55,13 +66,14 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
   if (problemName.rfind("Evaluation/Bayesian/Inference", 0) != 0)
    korali::logError("The Hierarchical Bayesian (Psi) can only accept sub-problems of type 'Evaluation/Bayesian/Inference' but sub-Problem %lu is of type: '%s'.\n", i, _subProblemEngines[i]["Problem"]["Type"].get<std::string>().c_str());
 
-  if (_conditionalPriors.size() < _subProblemEngines[i]["Variables"].size())
-   korali::logError("Sub-problem %lu contains less conditional priors (%zu) than  number of variables (%lu) in the Hierarchical Bayesian (Psi) problem.\n", i, _conditionalPriors.size(), _subProblemEngines[i]["Problem"]["Variables"].size());
+  if (_conditionalPriorsCount < _subProblemEngines[i]["Variables"].size())
+   korali::logError("Sub-problem %lu contains less conditional priors (%zu) than  number of variables (%lu) in the Hierarchical Bayesian (Psi) problem.\n", i, _conditionalPriorsCount, _subProblemEngines[i]["Problem"]["Variables"].size());
 
   if (_subProblemEngines[i]["Internal"]["Is Finished"] == false)
    korali::logError("The Hierarchical Bayesian (Psi) requires that all problems have run completely, but Problem %lu has not.\n", i);
  }
 
+ // Initialize subproblems
  _subProblemsSampleCoordinates.resize(_subProblemsCount);
  _subProblemsSampleLogLikelihoods.resize(_subProblemsCount);
  _subProblemsSampleLogPriors.resize(_subProblemsCount);
@@ -85,9 +97,9 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
  }
 
  // Configuring conditional priors given hyperparameters
- _conditionalPriorInfos.resize(_conditionalPriors.size());
+ _conditionalPriorInfos.resize(_conditionalPriorsCount);
 
- for (size_t i = 0; i < _conditionalPriors.size(); i++)
+ for (size_t i = 0; i < _conditionalPriorsCount; i++)
  {
   auto distributionJs = nlohmann::json();
   _k->_distributions[_conditionalPriorIndexes[i]]->getConfiguration(distributionJs);
@@ -120,7 +132,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
 
 void korali::problem::evaluation::bayesian::hierarchical::Psi::updateConditionalPriors(korali::Sample& sample)
 {
- for (size_t i = 0; i < _conditionalPriors.size(); i++)
+ for (size_t i = 0; i < _conditionalPriorsCount; i++)
  {
   for (size_t j = 0; j < _conditionalPriorInfos[i]._samplePositions.size(); j++)
    *(_conditionalPriorInfos[i]._samplePointers[j]) = sample["Parameters"][_conditionalPriorInfos[i]._samplePositions[j]];;
@@ -144,7 +156,7 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::evaluateLogLikeli
    {
     logValues[j] = -_subProblemsSampleLogPriors[i][j];
     for( size_t k = 0; k < _subproblems[i]->_conditionalPriorIndices.size(); k++ )
-    //for( size_t k = 0; k < _conditionalPriors.size(); k++ )
+    //for( size_t k = 0; k < _conditionalPriorsCount; k++ )
     {
      size_t idx = _subproblems[i]->_conditionalPriorIndices[k];
      logValues[j] += _k->_distributions[_conditionalPriorIndexes[idx]]->getLogDensity(_subProblemsSampleCoordinates[i][j][idx]);

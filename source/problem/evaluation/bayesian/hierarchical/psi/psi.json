@@ -2,16 +2,6 @@
  "Configuration Settings":
  [
    {
-    "Name": [ "Sub Problems" ],
-    "Type": "std::vector<std::string>",
-    "Description": "Provides results from previous Korali executions."
-   },
-   {
-    "Name": [ "Conditional Priors" ],
-    "Type": "std::vector<std::string>",
-    "Description": "List of conditional priors to use in the hierarchical problem."
-   }, 
-   {
     "Name": [ "Subproblems" ],
     "Type": "std::vector<korali::Subproblem*>",
     "Description": "Vector holding Subproblem information."
