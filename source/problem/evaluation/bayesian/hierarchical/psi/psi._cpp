@@ -22,18 +22,29 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::initialize()
    korali::logError("Did not find conditional prior distribution %s\n", _conditionalPriors[i].c_str());
  }
 
- if (_subProblems.size() < 2) korali::logError("Hierarchical Bayesian (Psi) problem requires defining at least two executed sub-problems.\n");
+ if (_subproblems.size() < 2) korali::logError("Hierarchical Bayesian (Psi) problem requires defining at least two executed sub-problems.\n");
 
  // Obtaining sub problem count and variable counts
- _subProblemsCount = _subProblems.size();
+ _subProblemsCount = _subproblems.size();
  _subProblemsVariablesCount = _conditionalPriors.size();
 
  // Creating JSON object from string
  _subProblemEngines = std::vector<korali::Experiment>(_subProblemsCount);
  for (size_t i = 0; i < _subProblemsCount; i++)
  {
-  if (_subProblemEngines[i].loadState(_subProblems[i]) == false) korali::logError("Error loading sub problem results from: %s...\n", _subProblems[i].c_str());
+  if (_subProblemEngines[i].loadState(_subproblems[i]->_path) == false) korali::logError("Error loading sub problem results from: %s...\n", _subproblems[i]->_path.c_str());
   _subProblemEngines[i].initialize();
+ }
+ 
+ for (size_t j = 0; j < _subProblemsCount; j++) 
+ {
+   _subproblems[j]->_priorsIdx.resize(0);
+   for (size_t i = 0; i < _k->_variables.size(); i++) 
+     for(auto& priorName : _subproblems[j]->_priors) if (priorName == _k->_variables[i]->_name) _subproblems[j]->_priorsIdx.push_back(i);
+    
+   if(_subproblems[j]->_priorsIdx.size() != _subproblems[j]->_priors.size()) 
+     korali::logError("Could not find all priors assigned to subproblem %zu (found %zu out of %zu).\n", j, _subproblems[j]->_priorsIdx.size(), _subproblems[j]->_priors.size() );
+   if(_subproblems[j]->_priorsIdx.size() == 0 ) korali::logError("No prior assigned to subproblem %zu.\n", j );
  }
 
  // Sub-problem correctness checks
@@ -132,7 +143,9 @@ void korali::problem::evaluation::bayesian::hierarchical::Psi::evaluateLogLikeli
    {
     logValues[j] = -_subProblemsSampleLogPriors[i][j];
     for( size_t k = 0; k < _conditionalPriors.size(); k++ )
+    {
      logValues[j] += _k->_distributions[_conditionalPriorIndexes[k]]->getLogDensity(_subProblemsSampleCoordinates[i][j][k]);
+    }
    }
 
    logLikelihood += logSumExp(logValues);

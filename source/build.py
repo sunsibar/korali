@@ -104,6 +104,18 @@ def consumeValue(base, moduleName, path, varName, varType, varDefault, options):
   cString += ' korali::JsonInterface::eraseValue(' + base + ', "' + path.replace('"', "'") + '");\n\n'
   return cString
 
+ if ('std::vector<korali::Subproblem' in varType):
+  baseType = varType.replace('std::vector<', '').replace('>','')
+  cString += ' ' + varName + '.clear();\n'
+  cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back(new Subproblem());\n'
+  return cString
+
+ if ('std::vector<korali::Subproblem*>' in varType):
+  baseType = varType.replace('std::vector<', '').replace('>','')
+  cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back(new Subproblem());\n'
+  cString += ' korali::JsonInterface::eraseValue(' + base + ', "' + path.replace('"', "'") + '");\n\n'
+  return cString
+
  if ('std::vector<korali::' in varType):
   baseType = varType.replace('std::vector<', '').replace('>','')
   cString += ' for(size_t i = 0; i < ' + base + path + '.size(); i++) ' + varName + '.push_back((' + baseType + ')korali::Module::getModule(' + base + path + '[i]));\n'
@@ -154,6 +166,10 @@ def saveValue(base, path, varName, varType):
   sString = ''
   return sString
 
+ if ('korali::Subproblem' in varType):
+  sString = ''
+  return sString
+
  if ('std::vector<korali::' in varType):
   sString = ' for(size_t i = 0; i < ' + varName + '.size(); i++) ' + varName + '[i]->getConfiguration(' + base + path + '[i]);\n'
   return sString
@@ -198,6 +214,12 @@ def createSetConfiguration(module):
    codeString += ' if(js' + getVariablePath(v) + '.is_number()) ' + getCXXVariableName(v["Name"]) + ' = js' + getVariablePath(v) + ';\n'
    codeString += ' if(js' + getVariablePath(v) + '.is_string()) { _hasConditionalVariables = true; ' + getCXXVariableName(v["Name"]) + 'Conditional = js' + getVariablePath(v) + '; } \n'
    codeString += ' korali::JsonInterface::eraseValue(js, "' + getVariablePath(v).replace('"', "'") + '");\n\n'
+ 
+ if 'Subproblems Configuration' in module:
+  codeString += ' for (size_t i = 0; i < js["Subproblems"].size(); i++) { \n'
+  for v in module["Subproblems Configuration"]:
+   codeString += consumeValue('js["Subproblems"][i]', module["Name"], getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v), getVariableDefault(v), getVariableOptions(v))
+  codeString += ' } \n'
 
  codeString += ' ' + module["Parent Class"] + '::setConfiguration(js);\n'
 
@@ -232,6 +254,12 @@ def createGetConfiguration(module):
   codeString += ' for (size_t i = 0; i <  _k->_variables.size(); i++) { \n'
   for v in module["Variables Configuration"]:
    codeString += saveValue('_k->_js["Variables"][i]', getVariablePath(v), '_k->_variables[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
+  codeString += ' } \n'
+
+ if 'Subproblems Configuration' in module:
+  codeString += ' for (size_t i = 0; i < _subproblems.size(); i++) { \n'
+  for v in module["Subproblems Configuration"]:
+   codeString += saveValue('js["Subproblems"][i]', getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
   codeString += ' } \n'
 
  if 'Conditional Variables' in module:
@@ -338,6 +366,19 @@ def createVariableDeclarations(module):
 
  return variableDeclarationString
 
+
+####################################################################
+
+def createSubproblemDeclarations(module):
+ subproblemDeclarationString = ''
+
+ if 'Subproblems Configuration' in module:
+  for v in module["Subproblems Configuration"]:
+   subproblemDeclarationString += '  ' + getVariableType(v) + ' ' + getCXXVariableName(v["Name"]) + ';\n'
+
+ return subproblemDeclarationString
+
+
 ####################################################################
 
 def save_if_different(filename, content):
@@ -367,6 +408,7 @@ moduleIncludeList = ''
 
 # Variable Declaration List
 varDeclarationSet = set()
+subproblemDeclarationSet = set()
 
 # Detecting modules' json file
 for moduleDir, relDir, fileNames in os.walk(koraliDir):
@@ -432,6 +474,11 @@ for moduleDir, relDir, fileNames in os.walk(koraliDir):
    for varDecl in createVariableDeclarations(moduleConfig).splitlines():
     varDeclarationSet.add(varDecl)
 
+   # Retrieving subproblem declarations
+   for subproblemDecl in createSubproblemDeclarations(moduleConfig).splitlines():
+    subproblemDeclarationSet.add(subproblemDecl)
+
+
    # Saving new header .hpp file
    moduleNewHeaderFile = moduleDir + '/' + moduleFilename + '.hpp'
    save_if_different(moduleNewHeaderFile, newHeaderString)
@@ -476,10 +523,22 @@ save_if_different(moduleNewHeaderFile, newBaseString)
 variableDeclarationList = '\n'.join(sorted(varDeclarationSet))
 
 variableBaseHeaderFileName = koraliDir + '/experiment/variable/variable._hpp'
-variableNewHeaderFile = koraliDir + '/experiment/variable/variable.hpp'
+variableNewHeaderFileName = koraliDir + '/experiment/variable/variable.hpp'
 with open(variableBaseHeaderFileName, 'r') as file: variableBaseHeaderString = file.read()
 newBaseString = variableBaseHeaderString
 newBaseString = newBaseString.replace(' // Variable Declaration List', variableDeclarationList)
-save_if_different(variableNewHeaderFile, newBaseString)
+save_if_different(variableNewHeaderFileName, newBaseString)
+
+###### Updating subproblem header file
+
+subproblemDeclarationList = '\n'.join(sorted(subproblemDeclarationSet))
+
+subproblemBaseHeaderFileName = koraliDir + '/problem/evaluation/bayesian/hierarchical/subproblem/subproblem._hpp'
+subproblemNewHeaderFileName = koraliDir +  '/problem/evaluation/bayesian/hierarchical/subproblem/subproblem.hpp'
+with open(subproblemBaseHeaderFileName, 'r') as file: subproblemBaseHeaderString = file.read()
+newBaseString = subproblemBaseHeaderString
+newBaseString = newBaseString.replace(' // Subprolem Declaration List', subproblemDeclarationList)
+save_if_different(subproblemNewHeaderFileName, newBaseString)
+
 
 print("[Korali] End Parser\n")
