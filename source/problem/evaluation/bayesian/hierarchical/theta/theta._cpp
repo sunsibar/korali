@@ -1,6 +1,8 @@
 #include "problem/evaluation/bayesian/hierarchical/theta/theta.hpp"
 #include "conduit/conduit.hpp"
 
+#include <set>
+
 void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
 {
  // Loading Psi-problem Experiment from path
@@ -24,9 +26,13 @@ void korali::problem::evaluation::bayesian::hierarchical::Theta::initialize()
     korali::logError("The Hierarchical Bayesian (Theta) can only accept a psi-problem of type 'Evaluation/Bayesian/Hierarchical/Psi' but psi-Problem is of type: '%s'.\n", psiProblemType.c_str());
 
   // Cross-checks
-  //if (_psiProblemEngine["Problem"]["Conditional Priors"].size() != _thetaProblemEngine["Variables"].size())
-    //korali::logError("Sub-problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _thetaProblemEngine["Variables"].size(), _psiProblemEngine["Problem"]["Conditional Priors"].size());
-
+  std::set<std::string> cset;
+  for (size_t j = 0; j < _psiProblemEngine["Problem"]["Subproblems"].size(); j++) 
+      cset.insert(_psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].begin(), _psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].end());
+  
+  if ( _thetaProblemEngine["Variables"].size() != cset.size() )
+    korali::logError("The problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
+ 
   // Now inheriting Sub problem's variables
   _k->_distributions = _thetaProblemEngine._distributions;
   _k->_variables = _thetaProblemEngine._variables;

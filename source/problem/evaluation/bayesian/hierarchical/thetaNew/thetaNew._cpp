@@ -1,6 +1,8 @@
 #include "problem/evaluation/bayesian/hierarchical/thetaNew/thetaNew.hpp"
 #include "conduit/conduit.hpp"
 
+#include <set>
+
 void korali::problem::evaluation::bayesian::hierarchical::ThetaNew::initialize()
 {
   korali::problem::evaluation::bayesian::Hierarchical::initialize();
@@ -18,8 +20,13 @@ void korali::problem::evaluation::bayesian::hierarchical::ThetaNew::initialize()
     korali::logError("The Hierarchical Bayesian (Theta New) requires that the psi-problem has run completely, but it has not.\n");
 
   // Cross-checks
-  //if (_psiProblemEngine["Problem"]["Conditional Priors"].size() != _k->_variables.size() )
-    //korali::logError("The problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), _psiProblemEngine["Problem"]["Conditional Priors"].size());
+  std::set<std::string> cset;
+  for (size_t j = 0; j < _psiProblemEngine["Problem"]["Subproblems"].size(); j++) 
+      cset.insert(_psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].begin(), _psiProblemEngine["Problem"]["Subproblems"][j]["Conditional Priors"].end());
+  
+  if ( _k->_variables.size() != cset.size() )
+    korali::logError("The problem contains a different number of variables (%lu) than conditional priors in the Evaluation/Bayesian/Hierarchical/Psi problem (%lu).\n", _k->_variables.size(), cset.size());
+  
 
   // Loading Psi problem results
   _psiProblemSampleCount = _psiProblemEngine["Solver"]["Internal"]["Chain Leaders LogLikelihoods"].size();
