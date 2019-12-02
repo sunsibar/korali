@@ -1,6 +1,7 @@
 #ifndef __KORALI_SUBPROBLEM_HPP_
 #define __KORALI_SUBPROBLEM_HPP_
 
+#include <string>
 #include <vector>
 
 namespace korali
@@ -9,8 +10,11 @@ namespace korali
 class Subproblem
 {
 
+ // Variable Declaration List
  public:
-   // Variable Declaration List
+ std::string _path; // dir of subproblem results
+ std::vector<std::string> _priors; // linked priors of Psi
+ std::vector<size_t> _priorsIdx; // index of linked priors of Psi
 
 };
 

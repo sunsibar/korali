@@ -166,6 +166,10 @@ def saveValue(base, path, varName, varType):
   sString = ''
   return sString
 
+ if ('korali::Subproblem' in varType):
+  sString = ''
+  return sString
+
  if ('std::vector<korali::' in varType):
   sString = ' for(size_t i = 0; i < ' + varName + '.size(); i++) ' + varName + '[i]->getConfiguration(' + base + path + '[i]);\n'
   return sString
@@ -212,9 +216,9 @@ def createSetConfiguration(module):
    codeString += ' korali::JsonInterface::eraseValue(js, "' + getVariablePath(v).replace('"', "'") + '");\n\n'
  
  if 'Subproblems Configuration' in module:
-  codeString += ' for (size_t i = 0; i < _k->_js["Subproblems"].size(); i++) { \n'
+  codeString += ' for (size_t i = 0; i < js["Subproblems"].size(); i++) { \n'
   for v in module["Subproblems Configuration"]:
-   codeString += consumeValue('_k->_js["Subproblems"][i]', module["Name"], getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v), getVariableDefault(v), getVariableOptions(v))
+   codeString += consumeValue('js["Subproblems"][i]', module["Name"], getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v), getVariableDefault(v), getVariableOptions(v))
   codeString += ' } \n'
 
  codeString += ' ' + module["Parent Class"] + '::setConfiguration(js);\n'
@@ -255,7 +259,7 @@ def createGetConfiguration(module):
  if 'Subproblems Configuration' in module:
   codeString += ' for (size_t i = 0; i < _subproblems.size(); i++) { \n'
   for v in module["Subproblems Configuration"]:
-   codeString += saveValue('_k->_js["Subproblems"][i]', getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
+   codeString += saveValue('js["Subproblems"][i]', getVariablePath(v), '_subproblems[i]->' + getCXXVariableName(v["Name"]), getVariableType(v))
   codeString += ' } \n'
 
  if 'Conditional Variables' in module:
