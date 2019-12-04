@@ -25,8 +25,6 @@ e["Variables"][1]["Prior Distribution"] = "Uniform 1"
 e["Variables"][2]["Prior Distribution"] = "Uniform 2"
 e["Variables"][3]["Prior Distribution"] = "Uniform 3"
 
-#e["Problem"]["Conditional Priors"] = [ "Conditional 0", "Conditional 1" ]
-
 # Configuring the problem's random distributions
 e["Distributions"][0]["Name"] = "Conditional 0"
 e["Distributions"][0]["Type"] = "Univariate/Gaussian"
