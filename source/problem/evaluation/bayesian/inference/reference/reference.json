@@ -17,9 +17,13 @@
     "Type": "std::string",
     "Options": [
                 { "Value": "Additive Gaussian", "Description": "Uses an additive normal distribution to produce the likelihood." },
+                { "Value": "Additive Normal", "Description": "Uses an additive normal distribution to produce the likelihood." },
                 { "Value": "Additive Gaussian Variance", "Description": "Uses an additive normal distribution, and variance instead of standard deviation,  to produce the likelihood." },
+                { "Value": "Additive Normal Variance", "Description": "Uses an additive normal distribution, and variance instead of standard deviation,  to produce the likelihood." },
                 { "Value": "Multiplicative Gaussian", "Description": "Uses a multipicative normal distribution to produce the likelihood." },
-                { "Value": "Multiplicative Gaussian Data", "Description": "Uses an multiplicative normal distribution (data) to produce the likelihood." }
+                { "Value": "Multiplicative Normal", "Description": "Uses a multipicative normal distribution to produce the likelihood." },
+                { "Value": "Multiplicative Gaussian Data", "Description": "Uses an multiplicative normal distribution (data) to produce the likelihood." },
+                { "Value": "Multiplicative Normal Data", "Description": "Uses an multiplicative normal distribution (data) to produce the likelihood." }
                ],
     "Description": "Specifies the likelihood model to approximate the reference data to."
    }
