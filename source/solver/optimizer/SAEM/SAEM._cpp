@@ -1,0 +1,199 @@
+#include "solver/optimizer/SAEM/SAEM.hpp"
+#include "problem/problem.hpp"
+#include "experiment/experiment.hpp"
+#include "conduit/conduit.hpp"
+
+#include <stdio.h>
+
+void korali::solver::optimizer::SAEM::initialize()
+{
+
+  if( _k->_problem->getType() != "Evaluation/Bayesian/Inference/Latent")
+    korali::logError("SAEM can only optimize problems of type 'Evaluation/Bayesian/Inference/Latent' .\n");
+
+  N = _k->_variables.size();
+  NLatent = _k->_latentVariableIndices.size();
+
+  if (_k->_currentGeneration > 0) return;
+
+  for (size_t i = 0; i < N; i++)
+    if( std::isfinite(_k->_variables[i]->_initialValue) == false )
+      korali::logError("Initial Value of variable \'%s\' not defined (no defaults can be calculated).\n", _k->_variables[i]->_name.c_str());
+
+  /* Create a sampler if none is given */
+
+  /* */
+
+
+  _currentX.resize( N, 0.0 );
+  for (size_t i = 0; i < N; i++)
+    _currentX[i] = _k->_variables[i]->_initialValue;
+
+  _bestX = _currentX;
+  //_delta.resize( N, _delta0 );
+  //_currentGradient.resize( N, 0);
+  //_previousGradient.resize( N, 0.0 );
+
+  _bestEvaluation = korali::Inf;
+  //_xDiff = korali::Inf;
+  //_maxStallCounter = 0;
+  //_normPreviousGradient = korali::Inf;
+  //_previousEvaluation   = korali::Inf;
+}
+
+
+
+
+
+void korali::solver::optimizer::SAEM::initializeSampler( void)
+{
+
+    /*
+    probability to sample from:
+    p(d, z | theta) * p(theta) -- that's the (log-)posterior
+    - use a "Custom" bayesian problem, with our log-posterior as "Likelihood Model" , but with the current values for theta inserted.
+
+    */
+    _k->_problem->evaluateLogPosterior
+
+    eList = []
+    for (size_t i=0; i <NLatent; i++){
+
+         auto k = korali::Engine();
+         auto e = korali::Experiment();
+         auto p = heat2DInit(&argc, &argv);
+
+         e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
+         e["Problem"]["Likelihood Model"] = [_currentHyperparameters](korali::sample s) -> void {
+                        if (! sample.contains("Latent Variables")){
+                            korali::logError("You try to evaluate the likelihood without passing values for the latent variables to the sample.\n"); }
+                        s["Hyperparameters"] = _currentHyperparameters;
+                        // Ugly? & Probably doesnt work
+                        s->_problem->_evaluateLogLikelihood();
+                        }
+
+
+         // &my_probability_function // <- without prior, this is passed per variable; but need to pre-insert the data points
+        // e["Problem"]["Reference Data"] = getReferenceData("setup/data/",i);
+
+          // Configuring the problem's random distributions
+          e["Distributions"][0]["Name"] = "Uniform 0"
+          e["Distributions"][0]["Type"] = "Univariate/Uniform"
+          e["Distributions"][0]["Minimum"] = 0.0
+          e["Distributions"][0]["Maximum"] = 20.0
+
+      e["Distributions"][1]["Name"] = "Uniform 1"
+      e["Distributions"][1]["Type"] = "Univariate/Uniform"
+      e["Distributions"][1]["Minimum"] = 0.0
+      e["Distributions"][1]["Maximum"] = 10.0
+
+      e["Variables"][0]["Name"] = "mu"
+      e["Variables"][0]["Bayesian Type"] = "Statistical"
+      e["Variables"][0]["Prior Distribution"] = "Uniform 0"
+
+      e["Variables"][1]["Name"] = "sigma"
+      e["Variables"][1]["Bayesian Type"] = "Statistical"
+      e["Variables"][1]["Prior Distribution"] = "Uniform 1"
+
+      e["Solver"]["Type"] = "Sampler/TMCMC"
+      e["Solver"]["Population Size"] = 1000
+      e["Solver"]["Target Coefficient Of Variation"] = 0.6
+      e["Solver"]["Covariance Scaling"] = 0.02
+      e["Solver"]["Default Burn In"] = 0;
+
+      e["Results"]["Path"] = "setup/results_phase_1/" + str(i).zfill(3)
+      e["Console"]["Verbosity"] = "Detailed"
+      eList.append(e)
+
+     }
+}
+
+/*void korali::solver::optimizer::Rprop::evaluateFunctionAndGradient( void )
+{
+  int Ns = 1;
+  // Initializing Sample Evaluation
+  std::vector<korali::Sample> samples(Ns);
+  for (size_t i = 0; i < Ns; i++){
+    samples[i]["Operation"]  = "Basic Evaluation";
+    samples[i]["Parameters"] = _currentX;
+    samples[i]["Sample Id"]  = i;
+    _modelEvaluationCount++;
+    korali::_conduit->start(samples[i]);
+  }
+
+  // Waiting for samples to finish
+  korali::_conduit->waitAll(samples);
+
+  // Processing results
+  // The 'minus' is there because we want Rprop to do Maximization be default.
+  for (size_t i = 0; i < Ns; i++){
+    _currentEvaluation = samples[i]["Evaluation"];
+    _currentEvaluation = -_currentEvaluation;
+    for( size_t j=0; j<N; j++){
+      _currentGradient[j] = samples[i]["Gradient"][j];
+      _currentGradient[j] = -_currentGradient[j];
+    }
+  }
+}*/
+
+void korali::solver::optimizer::SAEM::runGeneration( void )
+{
+
+  /* E1: Sample latent variable values */
+
+
+  /* E2: Update posterior probability function Q */
+
+
+  /* M:  Find argmax Q(theta) */
+
+
+
+  /* * * * * * */
+
+
+
+  evaluateFunctionAndGradient( );
+
+  korali::logInfo("Normal","X = [ ");
+  for(size_t k=0; k<N; k++) korali::logData("Normal"," %.5le  ",_currentX[k]);
+  korali::logData("Normal"," ]\n");
+
+  korali::logInfo("Normal","F(X) = %le \n", _currentEvaluation );
+
+  korali::logInfo("Normal","DF(X) = [ ");
+  for(size_t k=0; k<N; k++) korali::logData("Normal"," %.5le  ",_currentGradient[k]);
+  korali::logData("Normal"," ]\n");
+
+  korali::logInfo("Normal","X_best = [ ");
+  for(size_t k=0; k<N; k++) korali::logData("Normal"," %.5le  ",_bestX[k]);
+  korali::logData("Normal"," ]\n");
+
+  Update_iminus();
+
+  _previousEvaluation   = _currentEvaluation;
+  _previousGradient     = _currentGradient;
+  _normPreviousGradient = vectorNorm(_previousGradient);
+
+  if( _currentEvaluation < _bestEvaluation ){
+    _bestEvaluation = _currentEvaluation;
+    std::vector<double> tmp(N);
+    for(size_t j=0; j<N; j++) tmp[j] = _bestX[j]-_currentX[j];
+    _xDiff = vectorNorm( tmp );
+    _bestX = _currentX;
+    _maxStallCounter = 0;
+  }
+  else{
+    _maxStallCounter++;
+  }
+
+}
+
+
+
+
+void korali::solver::optimizer::SAEM::printGenerationBefore(){ return; }
+
+void korali::solver::optimizer::SAEM::printGenerationAfter() { return; }
+
+void korali::solver::optimizer::SAEM::finalize()  { return; }

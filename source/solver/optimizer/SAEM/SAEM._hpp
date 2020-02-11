@@ -1,0 +1,34 @@
+#ifndef _KORALI_SOLVERS_RPROP_H_
+#define _KORALI_SOLVERS_RPROP_H_
+
+#include <vector>
+#include "solver/optimizer/optimizer.hpp"
+#include "problem/evaluation/evaluation.hpp"
+
+namespace korali { namespace solver { namespace optimizer {
+
+class Rprop : public korali::solver::Optimizer
+{
+
+  private:  
+
+    void evaluateFunctionAndGradient( void );
+
+    void Update_plus( void ); // Rprop_plus
+    void Update_minus( void ); // Rprop_minus
+    void Update_iplus( void ); // iRprop_plus
+    void Update_iminus( void ); // iRprop_minus
+
+  public:
+
+    void initialize() override;
+    void finalize() override;
+    void runGeneration() override;
+    void printGenerationBefore() override;
+    void printGenerationAfter() override;
+
+};
+
+} } } // namespace korali::solver::optimizer
+
+#endif // _KORALI_SOLVERS_RPROP_H_
