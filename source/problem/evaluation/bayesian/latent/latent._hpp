@@ -1,0 +1,29 @@
+#ifndef _KORALI_PROBLEM_BAYESIAN_LATENT_HPP_
+#define _KORALI_PROBLEM_BAYESIAN_LATENT_HPP_
+
+#include "problem/evaluation/bayesian/inference/inference.hpp"
+
+namespace korali { namespace problem { namespace evaluation { namespace bayesian {
+
+class Latent : public korali::problem::evaluation::Bayesian
+{
+ public:
+    //TODO
+  //std::vector<size_t> _computationalVariableIndices;
+  //std::vector<size_t> _statisticalVariableIndices;
+  std::vector<size_t> _latentVariableIndices;
+  std::vector<size_t> _hyperparameterVariableIndices;
+  void initialize() override;
+
+
+ void evaluateLogLikelihood(korali::Sample& sample) override;
+ void evaluateLogPrior(korali::Sample& sample) override;
+ void evaluateLogPosterior(korali::Sample& sample) override;
+ void initialize() override;
+
+};
+
+} } } } // namespace korali::problem::evaluation::bayesian::Inference
+
+
+#endif // _KORALI_PROBLEM_BAYESIAN_LATENT_HPP_

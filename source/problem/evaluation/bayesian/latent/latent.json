@@ -1,0 +1,50 @@
+{
+
+  "Configuration Settings":
+ [
+   {
+    "Name": [ "S of Likelihood Model" ],
+    "Type": "std::function<void(korali::Sample&)>",
+    "Description": "Note for the following: The Latent problem does not know about 'data'; any data needs to be inserted into S beforehand. -- Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
+
+   },
+   {
+    "Name": [ "Zeta of Likelihood Model" ],
+    "Type": "std::function<void(korali::Sample&)>",
+     "Description": "Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
+  },
+   {
+    "Name": [ "Phi of Likelihood Model" ],
+    "Type": "std::function<void(korali::Sample&)>",
+    "Description": "Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
+ },
+
+   {
+    "Name": [ "Latent Variable Sampler" ],
+    "Type": "std::function<void(korali::Sample&)>",
+    "Description": "Stores a user-defined sampler. It should return a sample of the latent variables, given a value for the parameters of the distribution and the observed datapoints."
+   }
+ ],
+
+
+
+ "Variables Configuration":
+ [
+   {
+    "Name": [ "Bayesian Type" ],
+    "Type": "std::string",
+    "Default": "Hyperparameter",
+    "Options": [
+                { "Value": "Latent", "Description": "The variable is part of the sample processed by the model, but we are not given values for it." },
+                { "Value": "Hyperparameter", "Description": "The variable is used by the likelihood model as statistical parameter." }
+               ],
+    "Description": "Specifies the purpose of the variable for the bayesian model."
+   }
+ ],
+
+   "Internal Settings":
+ [
+ ]
+
+
+}
