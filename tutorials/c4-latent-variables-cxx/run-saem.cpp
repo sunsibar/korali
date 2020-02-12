@@ -1,4 +1,5 @@
-#include "model/heat2d.h"
+#include "model/dummy-sampler.hpp"
+#include "model/model.hpp"
 #include "korali.hpp"
 
 int main(int argc, char* argv[])
@@ -7,13 +8,14 @@ int main(int argc, char* argv[])
  auto e = korali::Experiment();
  auto p = heat2DInit(&argc, &argv);
 
- e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Reference";
- e["Problem"]["Likelihood Model"] = "Additive Normal";
- e["Problem"]["Reference Data"] = p.refTemp;
- e["Problem"]["Computational Model"] = &heat2DSolver;
+ e["Problem"]["Type"] = "Evaluation/Bayesian/Latent";
+ e["Problem"]["Latent Variable Sampler"] = &dummySampler;
+ e["Problem"]["S Of Likelihood Model"] = &heat2DSolver;
+ e["Problem"]["Zeta Of Likelihood Model"] = &heat2DSolver;
+ e["Problem"]["Phi Of Likelihood Model"] = &heat2DSolver;
 
- e["Solver"]["Type"] = "Optimizer/CMAES";
- e["Solver"]["Population Size"] = 32;
+ e["Solver"]["Type"] = "Optimizer/SAEM";
+ e["Solver"]["Number Markov Chain Samples"] = 10;
  e["Solver"]["Termination Criteria"]["Max Generations"] = 100;
 
  e["Distributions"][0]["Name"] = "Uniform 0";

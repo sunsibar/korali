@@ -2,11 +2,13 @@
  "Configuration Settings":
  [
    {
-    "Name": [ "Delta Min" ],
-    "Default": "1e-6",
-    "Type": "double",
-    "Description": "Minimum Delta"
+    "Name": [ "Number Markov Chain Samples" ],
+    "Default": "10",
+    "Type": "int",
+    "Description": "The number of latent-variable samples to generate in each E-M iteration. More result in a more precise estimate of Q in each iteration - although Q is a Robbins–Monro 'running average', so there should not be a need for a very large number of samples."
    },
+
+
    {
     "Name": [ "Delta Max" ],
     "Default": "50",
@@ -68,6 +70,12 @@
     "Type": "std::vector<double>",
     "Default": "std::vector<double>(0)",
     "Description": "Current values of the hyperparameters"
+   },
+   {
+    "Name": [ "Previous Latent Sample Means" ],
+    "Type": "std::vector<double>",
+    "Default": "std::vector<double>(0)",
+    "Description": "For each latent variable, contains the mean of all sampled values from the previous generation / E-M step. Used to initialize sampling in the next iteration."
    },
 
    {

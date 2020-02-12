@@ -3,7 +3,9 @@
 #include "experiment/experiment.hpp"
 #include "conduit/conduit.hpp"
 
+#include <string>
 #include <stdio.h>
+#include <vector>
 
 void korali::solver::optimizer::SAEM::initialize()
 {
@@ -54,17 +56,21 @@ void korali::solver::optimizer::SAEM::initializeSampler( void)
     - use a "Custom" bayesian problem, with our log-posterior as "Likelihood Model" , but with the current values for theta inserted.
 
     */
-    _k->_problem->evaluateLogPosterior
 
-    eList = []
-    for (size_t i=0; i <NLatent; i++){
+    /* Create one sampling experiment for each latent variable.
+      -- Edit: Create one sampling experiment over all, after all the latent vars are correlated / have a joint distrib.
+        Todo: does it make sense to re-create these experiments at every E-M step? Otherwise, how
+            to automatically update the initial mean and the distribution function of the sampling experiments?*/
+    //std::vector<korali::Experiment> eList;
+    //for (size_t i=0; i <NLatent; i++){
 
          auto k = korali::Engine();
          auto e = korali::Experiment();
-         auto p = heat2DInit(&argc, &argv);
+         //auto p = heat2DInit(&argc, &argv);
 
-         e["Problem"]["Type"] = "Evaluation/Bayesian/Inference/Custom"
-         e["Problem"]["Likelihood Model"] = [_currentHyperparameters](korali::sample s) -> void {
+         // Based on tutorial a2-sampling
+         e["Problem"]["Type"] = "Evaluation/Direct/Basic"
+         e["Problem"]["Objective Function"] = [_currentHyperparameters](korali::sample s) -> void {
                         if (! sample.contains("Latent Variables")){
                             korali::logError("You try to evaluate the likelihood without passing values for the latent variables to the sample.\n"); }
                         s["Hyperparameters"] = _currentHyperparameters;
@@ -72,40 +78,45 @@ void korali::solver::optimizer::SAEM::initializeSampler( void)
                         s->_problem->_evaluateLogLikelihood();
                         }
 
+        for (size_t i=0; i <NLatent; i++){
 
-         // &my_probability_function // <- without prior, this is passed per variable; but need to pre-insert the data points
-        // e["Problem"]["Reference Data"] = getReferenceData("setup/data/",i);
+             size_t idx = _latentVariableIndices[i];
+             std::string varName = _k->_variables[idx]->_name;
 
-          // Configuring the problem's random distributions
-          e["Distributions"][0]["Name"] = "Uniform 0"
-          e["Distributions"][0]["Type"] = "Univariate/Uniform"
-          e["Distributions"][0]["Minimum"] = 0.0
-          e["Distributions"][0]["Maximum"] = 20.0
+             if (_k->_currentGeneration == 0){
+                std::double previousSampleMean =  _previousLatentSampleMeans[i]; // TODO: Check, do I need a vector of vectors instead?
+             } else {
+                std::double previousSampleMean = _k->variables[idx]->_initialValue;
+             }
+            // Defining problem's variables
+            e["Variables"][i]["Name"] = varName;
+            e["Variables"][i]["Initial Mean"] = previousSampleMean;
+            e["Variables"][i]["Initial Standard Deviation"] = 1.0;
+        }
 
-      e["Distributions"][1]["Name"] = "Uniform 1"
-      e["Distributions"][1]["Type"] = "Univariate/Uniform"
-      e["Distributions"][1]["Minimum"] = 0.0
-      e["Distributions"][1]["Maximum"] = 10.0
+        // Configuring the MCMC sampler parameters
+        e["Solver"]["Type"]  = "Sampler/MCMC";
+        e["Solver"]["Burn In"] = 500;
+        e["Solver"]["Termination Criteria"]["Max Samples"] = 5000;
 
-      e["Variables"][0]["Name"] = "mu"
-      e["Variables"][0]["Bayesian Type"] = "Statistical"
-      e["Variables"][0]["Prior Distribution"] = "Uniform 0"
+        // Configuring output settings
+        e["Results"]["Frequency"] = 500;
+        e["Console"]["Frequency"] = 500;
+        e["Console"]["Verbosity"] = "Detailed";
 
-      e["Variables"][1]["Name"] = "sigma"
-      e["Variables"][1]["Bayesian Type"] = "Statistical"
-      e["Variables"][1]["Prior Distribution"] = "Uniform 1"
+        // Todo: I don't think a result path is needed (and it'd need a step id in the pathname as well)
+        e["Results"]["Path"] = "setup/results_phase_1/" + "0"*(3 - str(i).length()) +  std:to_string(i);
 
-      e["Solver"]["Type"] = "Sampler/TMCMC"
-      e["Solver"]["Population Size"] = 1000
-      e["Solver"]["Target Coefficient Of Variation"] = 0.6
-      e["Solver"]["Covariance Scaling"] = 0.02
-      e["Solver"]["Default Burn In"] = 0;
 
-      e["Results"]["Path"] = "setup/results_phase_1/" + str(i).zfill(3)
-      e["Console"]["Verbosity"] = "Detailed"
-      eList.append(e)
 
-     }
+
+        //e["Problem"]["Type"] = "Evaluation/Direct/Basic";
+        //e["Problem"]["Objective Function"] = &model;
+
+
+      //  eList.push_back(e);
+
+    // }
 }
 
 /*void korali::solver::optimizer::Rprop::evaluateFunctionAndGradient( void )

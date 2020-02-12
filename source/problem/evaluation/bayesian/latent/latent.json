@@ -3,18 +3,18 @@
   "Configuration Settings":
  [
    {
-    "Name": [ "S of Likelihood Model" ],
+    "Name": [ "S Of Likelihood Model" ],
     "Type": "std::function<void(korali::Sample&)>",
     "Description": "Note for the following: The Latent problem does not know about 'data'; any data needs to be inserted into S beforehand. -- Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
 
    },
    {
-    "Name": [ "Zeta of Likelihood Model" ],
+    "Name": [ "Zeta Of Likelihood Model" ],
     "Type": "std::function<void(korali::Sample&)>",
      "Description": "Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
   },
    {
-    "Name": [ "Phi of Likelihood Model" ],
+    "Name": [ "Phi Of Likelihood Model" ],
     "Type": "std::function<void(korali::Sample&)>",
     "Description": "Functions S, zeta and phi together compose the user-defined log-likelihood model, as p(data, psi | theta) = exp{ -zeta(theta) + < S(data, psi), phi(theta) > }, where <., .> is the Euclidean scalar product. (We require a distribution from the exponential family.) The distribution can be unnormalized. It should return the value of the Log Likelihood of a given data sample and given latent variables psi."
  },

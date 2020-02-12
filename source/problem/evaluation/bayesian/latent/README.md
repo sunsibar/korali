@@ -49,7 +49,7 @@ s["Reference Evaluations"] // In "reference" problem types
 s["Sample Id"]
 ```
 
-I believe you can set and retrieve any key-value pair of choice. For the current problem, we will assume you to set "S", "zeta" and "psi", respectively. "S" and "psi" can be vector valued. 
+I believe you can set and retrieve any key-value pair of choice. For the current problem, we will assume you to set "S", "zeta" and "psi", respectively. "S" and "psi" can be vector valued. Use the variable "Latent Variables" to refer to the latent variables, and "Hyperparameters" to access hyperparameters. 
 
 You need to remember which variable has which position, to access it. (I might add fields for the sample to contain latent variables and hyperparameter values separately.)
 
